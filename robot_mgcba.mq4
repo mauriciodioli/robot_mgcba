@@ -20,16 +20,25 @@ Operaciones operaciones;
  int volumenes;
  int buys;
  int sells;
+ float posicionInicial;
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 int OnInit()
   {
+  //------------------------incia configuracion como marca el diagrama de flujos
    configIni.setDistancia(dist);
    configIni.setVolumen(volumenes);
    configIni.setCantidadBuy(buys);
    configIni.setCantidadSell(sells); 
-     
+  //-----------------------inicia operaciones como marca el diagrama de flujos
+   operaciones.operacionApertura();
+  //---------------------- lee posicion actual
+  //posicionInicial 
+  //-------------------------establece maximo y minimos
+  limites.limiteBuy();
+  limites.limiteSell();
+  limites.limiteMg();
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+
