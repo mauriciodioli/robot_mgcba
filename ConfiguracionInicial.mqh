@@ -12,45 +12,50 @@
 //+------------------------------------------------------------------+
 class ConfiguracionInicial
   {
-private:
+public:
    double dist;
-   double vol;
-   double buy;
-   double sell;
+   double volumen;
+   double buys;
+   double sells;
 public:
                      ConfiguracionInicial();
                     ~ConfiguracionInicial();
-                   void distancia(int &dis);
-                   void volumen();
-                   void estableceCantidadBuy();
-                   void estableceCantidadSell();
+                   void setDistancia(int &dis);
+                   void setVolumen(int &vol);
+                   void setCantidadBuy(int &buy);
+                   void setCantidadSell(int &sell);
+                 
   };
   //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void ConfiguracionInicial::distancia(int &dis)
+void ConfiguracionInicial::setDistancia(int &dis)
   {
-    printf("configuara distancia %d",dis);
-  }
-    //+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-void ConfiguracionInicial::volumen()
-  {
-  }
-    //+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-void ConfiguracionInicial::estableceCantidadBuy()
-  {
-  }
-    //+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-void ConfiguracionInicial::estableceCantidadSell()
-  {
-  }
+    dis=50; 
   
+  }
+    //+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void ConfiguracionInicial::setVolumen(int &vol)
+  {
+   vol=2;   
+  }
+    //+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void ConfiguracionInicial::setCantidadBuy(int &buy)
+  {
+    buy=4;
+  }
+    //+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void ConfiguracionInicial::setCantidadSell(int &sell)
+  {   
+    sell=4;
+  }
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
