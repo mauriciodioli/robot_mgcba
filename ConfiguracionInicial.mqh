@@ -20,7 +20,7 @@ private:
 public:
                      ConfiguracionInicial();
                     ~ConfiguracionInicial();
-                   void distancia();
+                   void distancia(int &dis);
                    void volumen();
                    void estableceCantidadBuy();
                    void estableceCantidadSell();
@@ -28,8 +28,9 @@ public:
   //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void ConfiguracionInicial::distancia()
+void ConfiguracionInicial::distancia(int &dis)
   {
+    printf("configuara distancia %d",dis);
   }
     //+------------------------------------------------------------------+
 //|                                                                  |

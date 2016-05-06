@@ -20,9 +20,9 @@ Operaciones operaciones;
 //+------------------------------------------------------------------+
 int OnInit()
   {
-//---
-   configIni.distancia();
-//---
+  int dist=0; 
+   configIni.distancia(dist);
+   
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+
