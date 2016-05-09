@@ -27,7 +27,7 @@ Operaciones operaciones;
 int OnInit()
   {
   //------------------------incia configuracion como marca el diagrama de flujos
-   configIni.setDistancia(dist);
+   //configIni.setDistancia(dist);
    configIni.setVolumen(volumenes);
    configIni.setCantidadBuy(buys);
    configIni.setCantidadSell(sells); 
@@ -52,9 +52,11 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 //| Expert tick function                                             |
 //+------------------------------------------------------------------+
+
+
 void OnTick()
   {
-   printf("configuraciones: %d %d %d %d",dist,volumenes,buys, sells);
+   //printf("configuraciones: %d %d %d %d",dist,volumenes,buys, sells);
    
    
   }
