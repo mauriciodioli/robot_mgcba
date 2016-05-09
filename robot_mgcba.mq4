@@ -61,7 +61,7 @@ void OnDeinit(const int reason)
    
   }
 //+------------------------------------------------------------------+
-//| Expert tick function                                             |
+//| Expert tick function  funcion  experto                           |
 //+------------------------------------------------------------------+
 
 
