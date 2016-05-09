@@ -3,9 +3,9 @@
 //|                        Copyright 2016, MetaQuotes Software Corp. |
 //|                                              http://www.mql4.com |
 //+------------------------------------------------------------------+
-#property copyright "Copyright 2016, MetaQuotes Software Corp."
+#property copyright "Copyright 2016, LPAHFT"
 #property link      "http://www.mql4.com"
-#property version   "1.00"
+#property version   "1.0"
 #property strict
 #include "ConfiguracionInicial.mqh"
 #include "Limites.mqh"
@@ -15,12 +15,23 @@ ConfiguracionInicial configIni;
 Limites limites;
 Controles controles;
 Operaciones operaciones;
+
+//*********************************************************************
 //--------------------------Configuracion de parametros-----------
+//*********************************************************************
+
+extern  int d_reticulado_pip = 2;     // distancia entre ordenes del reticulado.
+extern  int atr1p  =  1;     // atr1
+extern  int atr5p  =  5;     // atr5 para detectar la vela muy grande
+extern  int periodofgdi = 51 ;
  int dist; 
  int volumenes;
  int buys;
  int sells;
  float posicionInicial;
+//--------------------------FIN Configuracion de parametros-----------
+//--------------------------------------------------------------------
+
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
