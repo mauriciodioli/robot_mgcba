@@ -63,11 +63,10 @@ void OnDeinit(const int reason)
 //+------------------------------------------------------------------+
 //| Expert tick function  funcion  experto                           |
 //+------------------------------------------------------------------+
-
-
 void OnTick()
   {
-   printf("configuraciones: %d %d %d %d",dist,volumenes,buys, sells);
+   
+   //printf("configuraciones: %d %d %d %d",dist,volumenes,buys, sells);
    
    
   }
