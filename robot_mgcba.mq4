@@ -22,7 +22,7 @@ Operaciones operaciones;
 
 extern  int d_reticulado_pip = 2;   // distancia entre ordenes del reticulado.
 extern  int H_reticulado=  1;     // atr1
-extern  int atr5p  =  6;     // atr5 para detectar la vela muy grande
+extern  int atr5p  =  7;     // atr5 para detectar la vela muy grande
 extern  int periodofgdi = 51 ;
  int dist; 
  int volumenes;
