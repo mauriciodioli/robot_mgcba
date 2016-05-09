@@ -34,7 +34,7 @@ int OnInit()
   //-----------------------inicia operaciones como marca el diagrama de flujos
    operaciones.operacionApertura();
   //---------------------- lee posicion actual
-  //posicionInicial 
+  //posicionInicial
   //-------------------------establece maximo y minimos
   limites.limiteBuy();
   limites.limiteSell();
