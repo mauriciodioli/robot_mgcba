@@ -16,7 +16,7 @@ Limites limites;
 Controles controles;
 Operaciones operaciones;
 //--------------------------Configuracion de parametros-----------
- int dist; 
+ int distANCIA ; 
  int volumenes;
  int buys;
  int sells;
