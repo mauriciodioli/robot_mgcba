@@ -20,9 +20,9 @@ Operaciones operaciones;
 //--------------------------Configuracion de parametros-----------
 //*********************************************************************
 
-extern  int d_reticulado_pip = 2;     // distancia entre ordenes del reticulado.
-extern  int atr1p  =  1;     // atr1
-extern  int atr5p  =  5;     // atr5 para detectar la vela muy grande
+extern  int d_reticulado_pip = 2;   // distancia entre ordenes del reticulado.
+extern  int H_reticulado=  1;     // atr1
+extern  int atr5p  =  6;     // atr5 para detectar la vela muy grande
 extern  int periodofgdi = 51 ;
  int dist; 
  int volumenes;
