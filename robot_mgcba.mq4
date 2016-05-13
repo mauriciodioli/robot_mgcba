@@ -97,27 +97,7 @@ controles.resumenOrdenes(balance);
 
 }
 
-//controles.controlVelas(barras_m5,barras_m15,barras_m30,barras_h1);
-
-if( (iBars(NULL,PERIOD_M5)>2) && (barras_m5!=iBars(NULL,PERIOD_M5))   ){       // Velas de 5 minutito !!!
-barras_m5 = iBars(NULL,PERIOD_M5);
-//Print("M5M5M5M5M5M5M5M5M5M5M5M5");
-}
-
-if( (iBars(NULL,PERIOD_M15)>2) && (barras_m15!=iBars(NULL,PERIOD_M15))   ){       // Velas de 15 minutito !!!
-barras_m15 = iBars(NULL,PERIOD_M15);
-//Print("M15M15M15M15M15");
-}
-
-if( (iBars(NULL,PERIOD_M30)>2) && (barras_m30!=iBars(NULL,PERIOD_M30))   ){       // Velas de 30 minutito !!!
-barras_m30 = iBars(NULL,PERIOD_M30);
-//Print("M30M30M30");
-}
-
-if( (iBars(NULL,PERIOD_H1)>2) && (barras_h1!=iBars(NULL,PERIOD_H1))   ){       // Velas de 60 minutito !!!
-barras_h1 = iBars(NULL,PERIOD_H1);
-//Print("H1");
-}
+controles.controlVelas(barras_m5,barras_m15,barras_m30,barras_h1);
 
 
 
