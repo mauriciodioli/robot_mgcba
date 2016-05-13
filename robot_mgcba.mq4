@@ -19,37 +19,36 @@ Operaciones operaciones;
 //*********************************************************************
 //--------------------------Configuracion de parametros-----------
 //*********************************************************************
+extern double     vol=0.1;  //       Volumen inicial
+extern double        dgrilla=2;    // (d) grilla inicial
+extern int        Dtot=50;    //    (D)  grilla inicial
+extern int      slippage=10;               // Deslizamiento maximo permitido.
 
-extern  int d_reticulado_pip = 2;   // distancia entre ordenes del reticulado.
-extern  int H_reticulado=  1;     // atr1
-extern  int atr5p  =  7;     // atr5 para detectar la vela muy grande
-extern  int periodofgdi = 51 ;
- int dist; 
- int volumenes;
- int buys;
- int sells;
- float posicionInicial;
-//--------------------------FIN Configuracion de parametros-----------
-//--------------------------------------------------------------------
+ 
 
+double equity,balance,_bid,_ask,_point ;
+uint  barras_m1,barras_m5,barras_m15,barras_m30,barras_h1;
+static long opens;
+string come;
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
 int OnInit()
   {
   //------------------------incia configuracion como marca el diagrama de flujos
-   configIni.setDistancia(dist);
-   configIni.setVolumen(volumenes);
-   configIni.setCantidadBuy(buys);
-   configIni.setCantidadSell(sells); 
+   //configIni.setInterface();
+   //configIni.setVolumen(volumenes);
+   //configIni.setCantidadBuy(buys);
+   //configIni.setCantidadSell(sells); 
   //-----------------------inicia operaciones como marca el diagrama de flujos
-   operaciones.operacionApertura();
+   operaciones.operacionApertura(_point);
+   configIni.setBoton();
   //---------------------- lee posicion actual
   //posicionInicial 
   //-------------------------establece maximo y minimos
-  limites.limiteBuy();
-  limites.limiteSell();
-  limites.limiteMg();
+  //limites.limiteBuy();
+  //limites.limiteSell();
+ // limites.limiteMg();
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+
@@ -57,18 +56,82 @@ int OnInit()
 //+------------------------------------------------------------------+
 void OnDeinit(const int reason)
   {
-  
+  ObjectDelete(0,"openshort");
+  EventKillTimer();                // fin timer
    
   }
 //+------------------------------------------------------------------+
 //| Expert tick function  funcion  experto                           |
 //+------------------------------------------------------------------+
 
-
 void OnTick()
   {
-   printf("configuraciones: %d %d %d %d",dist,volumenes,buys, sells);
+// ***************************************************************************
+//          VARIABLES GLOBALES PARA EL INDICADOR DE GANANCIAS REAL TIME (experimental)
+// ===========================================================================
+equity = AccountEquity();
+balance = AccountBalance();
+GlobalVariableSet( "vGrafBalance", balance );
+GlobalVariableSet( "vGrafEquity", equity );
+// ********************* LLAMA BOTON **********************************
+if ( ObjectGetInteger(0,"openshort",OBJPROP_STATE)==1){
+   Print("SE ACCIONO EL BOTON");
+   operaciones.ArmarGrillaInicial(Dtot,dgrilla,vol,slippage,_point);   
+   ObjectSetInteger(0,"openshort",OBJPROP_STATE,false);
+}  
    
+// ***************************************************************************
+//    VARIABLES bid ask
+// ===========================================================================
+   _bid     = NormalizeDouble(MarketInfo(Symbol(), MODE_BID), Digits); //define a lower price 
+   _ask     = NormalizeDouble(MarketInfo(Symbol(), MODE_ASK), Digits); //define an upper price
    
+
+
+// ***************************************************************************
+// ***************************************************************************
+// MARCO          M1
+// ===========================================================================
+//    barras de marco temporal                   M1
+//    barras de marco temporal                   M1
+//    barras de marco temporal                   M1
+//    barras de marco temporal                   M1
+//    barras de marco temporal                   M1
+//    barras de marco temporal                   M1
+//    barras de marco temporal                   M1
+// ***************************************************************************
+if( (iBars(NULL,PERIOD_M1)>2) && (barras_m1!=iBars(NULL,PERIOD_M1))   ){       // Velas de 1 minutito !!!
+barras_m1 = iBars(NULL,PERIOD_M1);
+//Print("M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1");
+
+controles.resumenOrdenes(balance);
+
+}
+
+//controles.controlVelas(barras_m5,barras_m15,barras_m30,barras_h1);
+
+if( (iBars(NULL,PERIOD_M5)>2) && (barras_m5!=iBars(NULL,PERIOD_M5))   ){       // Velas de 5 minutito !!!
+barras_m5 = iBars(NULL,PERIOD_M5);
+//Print("M5M5M5M5M5M5M5M5M5M5M5M5");
+}
+
+if( (iBars(NULL,PERIOD_M15)>2) && (barras_m15!=iBars(NULL,PERIOD_M15))   ){       // Velas de 15 minutito !!!
+barras_m15 = iBars(NULL,PERIOD_M15);
+//Print("M15M15M15M15M15");
+}
+
+if( (iBars(NULL,PERIOD_M30)>2) && (barras_m30!=iBars(NULL,PERIOD_M30))   ){       // Velas de 30 minutito !!!
+barras_m30 = iBars(NULL,PERIOD_M30);
+//Print("M30M30M30");
+}
+
+if( (iBars(NULL,PERIOD_H1)>2) && (barras_h1!=iBars(NULL,PERIOD_H1))   ){       // Velas de 60 minutito !!!
+barras_h1 = iBars(NULL,PERIOD_H1);
+//Print("H1");
+}
+
+
+
+
   }
 //+------------------------------------------------------------------+
