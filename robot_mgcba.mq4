@@ -35,20 +35,9 @@ string come;
 //+------------------------------------------------------------------+
 int OnInit()
   {
-  //------------------------incia configuracion como marca el diagrama de flujos
-   //configIni.setInterface();
-   //configIni.setVolumen(volumenes);
-   //configIni.setCantidadBuy(buys);
-   //configIni.setCantidadSell(sells); 
   //-----------------------inicia operaciones como marca el diagrama de flujos
    operaciones.operacionApertura(_point);
    configIni.setBoton();
-  //---------------------- lee posicion actual
-  //posicionInicial 
-  //-------------------------establece maximo y minimos
-  //limites.limiteBuy();
-  //limites.limiteSell();
- // limites.limiteMg();
    return(INIT_SUCCEEDED);
   }
 //+------------------------------------------------------------------+

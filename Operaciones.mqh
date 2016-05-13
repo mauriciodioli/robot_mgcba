@@ -22,7 +22,6 @@ public:
                      Operaciones();
                     ~Operaciones();
                     void operacionApertura(double &_point);
-                    void operacionCierre();
                     void ArmarGrillaInicial(int &D, double &d, double &Vo, int&slippagee, double &_point);
   };
 //+----------------------------------------------------------------------------------------------------------------------+
@@ -404,12 +403,7 @@ void Operaciones::operacionApertura(double &_point)
      _point   = MarketInfo(Symbol(), MODE_POINT);
      EventSetTimer(5);                   // timer  
   }
-  //+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-void Operaciones::operacionCierre()
-  {
-  }
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
