@@ -17,13 +17,20 @@ private:
   string etiquetaBoton;
   int posicionX;
   int posicionY;
+  int tamaX;
+  int tamaY;
   int idColor;
 public:
                      Boton();
                      Boton(string &nombre,string &descripcion,int &x,int &y,int &c);
+                     Boton(string &nombre,string &descripcion,int &x,int &y,int &c,int &tamX,int &tamY);
+                     
                     ~Boton();
                     void getBoton();
-                    void setColor();
+                    void setColor(string &nombre,int &colorBoton);
+                    void getAccion(bool &bandera);
+                    void setPosicion(int &valX,int &valY);
+                    void setTam(int &tamX,int &TamY);
                     
   };
 // ***************************************************************************
@@ -32,13 +39,12 @@ public:
 void Boton::getBoton(){
 
    ObjectCreate(0,nombreBoton,OBJ_BUTTON,0,0,0);
-   ObjectSetInteger(0,nombreBoton,OBJPROP_XDISTANCE,posicionX);
-   ObjectSetInteger(0,nombreBoton,OBJPROP_YDISTANCE,posicionY);
-   ObjectSetInteger(0,nombreBoton,OBJPROP_XSIZE,100);
-   ObjectSetInteger(0,nombreBoton,OBJPROP_YSIZE,50);
+   
+   setPosicion(posicionX,posicionY);
+   setTam(tamaX,tamaY);
    ObjectSetString(0,nombreBoton,OBJPROP_TEXT,etiquetaBoton);
-   setColor();
    ObjectSetInteger(0,nombreBoton,OBJPROP_COLOR, White);
+   setColor(nombreBoton,idColor);
    ObjectSetInteger(0,nombreBoton,OBJPROP_BORDER_COLOR,clrBlack);
    ObjectSetInteger(0,nombreBoton,OBJPROP_BORDER_TYPE,BORDER_FLAT);
    ObjectSetInteger(0,nombreBoton,OBJPROP_BACK,false);
@@ -50,8 +56,31 @@ void Boton::getBoton(){
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void Boton::setColor(){
-switch(idColor){
+void Boton::setPosicion(int &valX,int &valY){
+   ObjectSetInteger(0,nombreBoton,OBJPROP_XDISTANCE,valX);
+   ObjectSetInteger(0,nombreBoton,OBJPROP_YDISTANCE,valY);
+
+}
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void Boton::setTam(int &tamX,int &tamY){
+   ObjectSetInteger(0,nombreBoton,OBJPROP_XSIZE,tamX);
+   ObjectSetInteger(0,nombreBoton,OBJPROP_YSIZE,tamY);
+
+}
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void Boton::getAccion(bool &bandera){
+   bandera=ObjectGetInteger(0,nombreBoton,OBJPROP_STATE);
+}
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void Boton::setColor(string &nombre,int &colorBoton){
+int cc=colorBoton;
+switch(cc){
       case 1: {ObjectSetInteger(0,nombreBoton,OBJPROP_BGCOLOR, clrBlue);break;}
       case 2: {ObjectSetInteger(0,nombreBoton,OBJPROP_BGCOLOR, clrRed);break;}
       case 3: {ObjectSetInteger(0,nombreBoton,OBJPROP_BGCOLOR, clrGreen);break;}
@@ -71,8 +100,26 @@ Boton::Boton(string &nombre,string &descripcion,int &x,int &y,int &c)
    etiquetaBoton=descripcion;
    posicionX=x;
    posicionY=y;
+   tamaX=100;
+   tamaY=50;
    idColor=c;
    getBoton();
+   
+  }
+  //+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+Boton::Boton(string &nombre,string &descripcion,int &x,int &y,int &c,int &tamX,int &tamY)
+  {
+   nombreBoton=nombre;
+   etiquetaBoton=descripcion;
+   posicionX=x;
+   posicionY=y;
+   tamaX=tamX;
+   tamaY=tamY;
+   idColor=c;
+   getBoton();
+   
    
   }
 //+------------------------------------------------------------------+
