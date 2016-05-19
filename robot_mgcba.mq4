@@ -13,11 +13,13 @@
 #include "Operaciones.mqh"
 #include "Boton.mqh"
 #include "Linea.mqh"
+#include "Sonido.mqh"
 ConfiguracionInicial configIni;
 Limites limites;
 Controles controles;
 Operaciones operaciones;
 Linea ObjLinea;
+Sonido sonido;
  
 //*********************************************************************
 //--------------------------Configuracion de parametros-----------
@@ -26,7 +28,11 @@ extern double   vol=0.1;  //       Volumen inicial
 extern double   dgrilla=2;    // (d) grilla inicial
 extern int      Dtot=50;    //    (D)  grilla inicial
 extern int      slippage=10;               // Deslizamiento maximo permitido.
-
+//+------------------------------------------------------------------------------------+
+//| Sonidos Se declara un obj sonido el cual tiene los distintos metodos para sonidos  |
+//+------------------------------------------------------------------------------------+
+string sonidoIinicio="ini.wav";
+string sonidoFin="stops.wav";
 //+------------------------------------------------------------------------------------+
 //| Constructor de botones (nombre del Boton, Descripcion,X,Y,Color,X tamaño,Y tamaño) |
 //+------------------------------------------------------------------------------------+
@@ -73,7 +79,8 @@ int OnInit()
    int x=100;
    int y=100;
    boton1.setPosicion(x,y);
-  
+   //se configura el timer con 1 o mas segundos
+    EventSetTimer(1); 
    
    //int colorC=4;
    //boton1.setColor(nombreBoton2,colorC);
@@ -121,19 +128,22 @@ bool ban;
 boton1.getAccion(ban);
 if (ban==1){
    Print("SE ACCIONO EL BOTON");
+   sonido.setSonido(sonidoIinicio);
    operaciones.ArmarGrillaInicial(Dtot,dgrilla,vol,slippage,_point);  
 
 }
 boton2.getAccion(ban);
-if(ban==1){}
+if(ban==1){
+ operaciones.operacionEnvio();
+}
 boton3.getAccion(ban);
 if(ban==1){
-ObjLinea.HLineMove(linea1,Bid);
+  sonido.setSonido(sonidoFin);
 }
 
 
 
-
+ObjLinea.HLineMove(linea1,Bid);
 ObjLinea.HLineMove(linea2,Ask);
 // ***************************************************************************
 //    VARIABLES bid ask
@@ -173,6 +183,6 @@ ObjLinea.HLineMove(linea2,Ask);
 void OnTimer()
 {
  
- //Print("TIMEEEEERRR");
+   Print("TIMEEEEERRR");
  
 }  
