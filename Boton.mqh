@@ -19,15 +19,15 @@ private:
   int posicionY;
   int tamaX;
   int tamaY;
-  int idColor;
+  color idColor;
 public:
                      Boton();
-                     Boton(string &nombre,string &descripcion,int &x,int &y,int &c);
-                     Boton(string &nombre,string &descripcion,int &x,int &y,int &c,int &tamX,int &tamY);
+                     Boton(string &nombre,string &descripcion,int x,int y,color &c);
+                     Boton(string &nombre,string &descripcion,int x,int y,color &c,int tamX,int tamY);
                      
                     ~Boton();
                     void getBoton();
-                    void setColor(string &nombre,int &colorBoton);
+                    void setColor(string &nombre,color &colorBoton);
                     void getAccion(bool &bandera);
                     void setPosicion(int &valX,int &valY);
                     void setTam(int &tamX,int &TamY);
@@ -74,30 +74,22 @@ void Boton::setTam(int &tamX,int &tamY){
 //+------------------------------------------------------------------+
 void Boton::getAccion(bool &bandera){
    bandera=ObjectGetInteger(0,nombreBoton,OBJPROP_STATE);
+    ObjectSetInteger(0,nombreBoton,OBJPROP_STATE,false);
 }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void Boton::setColor(string &nombre,int &colorBoton){
-int cc=colorBoton;
-switch(cc){
-      case 1: {ObjectSetInteger(0,nombreBoton,OBJPROP_BGCOLOR, clrBlue);break;}
-      case 2: {ObjectSetInteger(0,nombreBoton,OBJPROP_BGCOLOR, clrRed);break;}
-      case 3: {ObjectSetInteger(0,nombreBoton,OBJPROP_BGCOLOR, clrGreen);break;}
-      case 4: {ObjectSetInteger(0,nombreBoton,OBJPROP_BGCOLOR, clrYellow);break;}
-      case 5: {ObjectSetInteger(0,nombreBoton,OBJPROP_BGCOLOR, clrBrown);break;}
-      case 6: {ObjectSetInteger(0,nombreBoton,OBJPROP_BGCOLOR, clrOrange);break;}
-      case 7: {ObjectSetInteger(0,nombreBoton,OBJPROP_BGCOLOR, clrViolet);break;}
-    }
+void Boton::setColor(string &nombre,color &colorBoton){
+ObjectSetInteger(0,nombreBoton,OBJPROP_BGCOLOR, colorBoton);
+}
 
-}
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-Boton::Boton(string &nombre,string &descripcion,int &x,int &y,int &c)
+Boton::Boton(string &nombre,string &descripciones,int x,int y,color &c)
   {
    nombreBoton=nombre;
-   etiquetaBoton=descripcion;
+   etiquetaBoton=descripciones;
    posicionX=x;
    posicionY=y;
    tamaX=100;
@@ -109,10 +101,10 @@ Boton::Boton(string &nombre,string &descripcion,int &x,int &y,int &c)
   //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-Boton::Boton(string &nombre,string &descripcion,int &x,int &y,int &c,int &tamX,int &tamY)
+Boton::Boton(string &nombre,string &descripciones,int x,int y,color &c,int tamX,int tamY)
   {
    nombreBoton=nombre;
-   etiquetaBoton=descripcion;
+   etiquetaBoton=descripciones;
    posicionX=x;
    posicionY=y;
    tamaX=tamX;

@@ -22,7 +22,7 @@ public:
                      Operaciones();
                     ~Operaciones();
                     void operacionApertura(double &_point);
-                    void ArmarGrillaInicial(int &D, double &d, double &Vo, int&slippagee, double &_point);
+                    void ArmarGrillaInicial(int &D, double &d, double &Vo, int&slippagee, double &_pointt);
   };
 //+----------------------------------------------------------------------------------------------------------------------+
 //+----------------------------------------------------------------------------------------------------------------------+
@@ -327,7 +327,7 @@ int OrderOpenF(string     OO_symbol,
 //******************************************Arma la Grilla inical *****************************************
 //*********************************************************************************************************  
  
-void Operaciones::ArmarGrillaInicial(int &D, double &d, double &Vo, int &slippagee, double &_point ) // H,d,Vo
+void Operaciones::ArmarGrillaInicial(int &D, double &d, double &Vo, int &slippagee, double &_pointt ) // H,d,Vo
 {
 
    int Nordenes = (int) (D/d) ;
@@ -341,7 +341,7 @@ void Operaciones::ArmarGrillaInicial(int &D, double &d, double &Vo, int &slippag
    
    // bucle de las BUY
    double buyPrice = NormalizeDouble(Ask , Digits);
-   double buyTP    = NormalizeDouble(Ask + 10 * d *_point  ,Digits);
+   double buyTP    = NormalizeDouble(Ask + 10 * d *_pointt  ,Digits);
    double buySL    = 0;
    OrderOpenF(Symbol(),OP_BUY,Vo ,buyPrice ,slippagee,buySL,buyTP,comentario,MagicN,_ExpDate,Blue);
 
@@ -352,8 +352,8 @@ void Operaciones::ArmarGrillaInicial(int &D, double &d, double &Vo, int &slippag
    
    double nivelpip = nivel*d;
    
-   buyPrice = NormalizeDouble(_ask + 10*nivelpip*_point      ,Digits);
-   buyTP    = NormalizeDouble(_ask + 10*(nivelpip+d)*_point  ,Digits);
+   buyPrice = NormalizeDouble(_ask + 10*nivelpip*_pointt      ,Digits);
+   buyTP    = NormalizeDouble(_ask + 10*(nivelpip+d)*_pointt  ,Digits);
    //buySL=NormalizeDouble(_bid-StopLoss*_point,Digits);
    
    Print(" nivel :",   nivel," BUY nivelpip :",   nivelpip, "  BUY Price ",buyPrice ,"  BUY TP    ",buyTP    );
@@ -366,7 +366,7 @@ void Operaciones::ArmarGrillaInicial(int &D, double &d, double &Vo, int &slippag
   
    // bucle de las SELL
    double sellPrice = NormalizeDouble(Bid , Digits);
-   double sellTP    = NormalizeDouble(Bid - 10 * d *_point  ,Digits);
+   double sellTP    = NormalizeDouble(Bid - 10 * d *_pointt  ,Digits);
    double sellSL    = 0;
    OrderOpenF(Symbol(),OP_SELL,Vo ,sellPrice,slippagee,sellSL,sellTP,comentario,MagicN,_ExpDate,clrRed);
 
@@ -376,8 +376,8 @@ void Operaciones::ArmarGrillaInicial(int &D, double &d, double &Vo, int &slippag
    
    double nivelpip = nivel*d;
    
-   sellPrice  = NormalizeDouble( _bid - 10*nivelpip*_point      ,Digits);
-   sellTP     = NormalizeDouble( _bid - 10*(nivelpip+d)*_point  ,Digits);
+   sellPrice  = NormalizeDouble( _bid - 10*nivelpip*_pointt      ,Digits);
+   sellTP     = NormalizeDouble( _bid - 10*(nivelpip+d)*_pointt  ,Digits);
    
    Print(" nivel :",   nivel," SELL nivelpip :",   nivelpip, "  SELL Price ",sellPrice ,"  SELL TP    ",sellTP  );
    
@@ -398,9 +398,9 @@ void Operaciones::ArmarGrillaInicial(int &D, double &d, double &Vo, int &slippag
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void Operaciones::operacionApertura(double &_point)
+void Operaciones::operacionApertura(double &_pointt)
   {
-     _point   = MarketInfo(Symbol(), MODE_POINT);
+     _pointt   = MarketInfo(Symbol(), MODE_POINT);
      EventSetTimer(5);                   // timer  
   }
 

@@ -19,11 +19,11 @@ private:
 public:
                      Controles();
                     ~Controles();
-                    void resumenOrdenes(double &balance);
+                    void resumenOrdenes(double &balanc);
                     void controlVelas(uint &barras_m5,uint &barras_m15,uint &barras_m30,uint &barras_h1);
                     
   };
-void Controles::resumenOrdenes(double &balance)
+void Controles::resumenOrdenes(double &balanc)
 {
       //static int  N_ordenes_ant=0;
    int  N_ordenes=OrdersTotal();
@@ -60,31 +60,31 @@ void Controles::resumenOrdenes(double &balance)
             //"__ Slimit:",Ordenes_Sell_l,
             "__ Sstop:",Ordenes_Sell_s,
             "__ SELL:",Ordenes_Sell,
-            "__ Balance:",balance);
+            "__ Balance:",balanc);
 }
 
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void Controles::controlVelas(uint &barras_m5,uint &barras_m15,uint &barras_m30,uint &barras_h1)
+void Controles::controlVelas(uint &barra_m5,uint &barra_m15,uint &barra_m30,uint &barra_h1)
   {
-      if( (iBars(NULL,PERIOD_M5)>2) && (barras_m5!=iBars(NULL,PERIOD_M5))   ){       // Velas de 5 minutito !!!
-barras_m5 = iBars(NULL,PERIOD_M5);
+      if( (iBars(NULL,PERIOD_M5)>2) && (barra_m5!=iBars(NULL,PERIOD_M5))   ){       // Velas de 5 minutito !!!
+barra_m5 = iBars(NULL,PERIOD_M5);
 //Print("M5M5M5M5M5M5M5M5M5M5M5M5");
 }
 
-if( (iBars(NULL,PERIOD_M15)>2) && (barras_m15!=iBars(NULL,PERIOD_M15))   ){       // Velas de 15 minutito !!!
-barras_m15 = iBars(NULL,PERIOD_M15);
+if( (iBars(NULL,PERIOD_M15)>2) && (barra_m15!=iBars(NULL,PERIOD_M15))   ){       // Velas de 15 minutito !!!
+barra_m15 = iBars(NULL,PERIOD_M15);
 //Print("M15M15M15M15M15");
 }
 
-if( (iBars(NULL,PERIOD_M30)>2) && (barras_m30!=iBars(NULL,PERIOD_M30))   ){       // Velas de 30 minutito !!!
-barras_m30 = iBars(NULL,PERIOD_M30);
+if( (iBars(NULL,PERIOD_M30)>2) && (barra_m30!=iBars(NULL,PERIOD_M30))   ){       // Velas de 30 minutito !!!
+barra_m30 = iBars(NULL,PERIOD_M30);
 //Print("M30M30M30");
 }
 
-if( (iBars(NULL,PERIOD_H1)>2) && (barras_h1!=iBars(NULL,PERIOD_H1))   ){       // Velas de 60 minutito !!!
-barras_h1 = iBars(NULL,PERIOD_H1);
+if( (iBars(NULL,PERIOD_H1)>2) && (barra_h1!=iBars(NULL,PERIOD_H1))   ){       // Velas de 60 minutito !!!
+barra_h1 = iBars(NULL,PERIOD_H1);
 //Print("H1");
 }
   }

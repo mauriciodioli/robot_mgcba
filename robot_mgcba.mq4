@@ -12,41 +12,57 @@
 #include "Controles.mqh"
 #include "Operaciones.mqh"
 #include "Boton.mqh"
+#include "Linea.mqh"
 ConfiguracionInicial configIni;
 Limites limites;
 Controles controles;
 Operaciones operaciones;
+Linea ObjLinea;
  
 //*********************************************************************
 //--------------------------Configuracion de parametros-----------
 //*********************************************************************
-extern double     vol=0.1;  //       Volumen inicial
-extern double     dgrilla=2;    // (d) grilla inicial
-extern int        Dtot=50;    //    (D)  grilla inicial
+extern double   vol=0.1;  //       Volumen inicial
+extern double   dgrilla=2;    // (d) grilla inicial
+extern int      Dtot=50;    //    (D)  grilla inicial
 extern int      slippage=10;               // Deslizamiento maximo permitido.
 
-string nombreBoton="Boton1";
+//+------------------------------------------------------------------------------------+
+//| Constructor de botones (nombre del Boton, Descripcion,X,Y,Color,X tamaño,Y tamaño) |
+//+------------------------------------------------------------------------------------+
+string Boton1="Boton1";
 string descripcion="_INICIO_";
-int X=100;int Y=50;int col=3;
-string nombreBoton2="Boton2";
+color colorBoton1=clrGreen;
+
+string Boton2="Boton2";
 string descripcion2="_APAGADO_";
-int X1=100;int Y1=50;int col1=2;
-string nombreBoton3="Boton3";
+color colorBoton2=clrRed;
+
+string Boton3="Boton3";
 string descripcion3="_AVANCE_";
-int X2=100;int Y2=150;int col2=1;int tx=100;int ty=50;
+color colorBoton3=clrBlue;
 
+Boton boton1(Boton1,descripcion,100,50,colorBoton1);//boton 1
+Boton boton2(Boton2,descripcion2,100,50,colorBoton2);
+Boton boton3(Boton3,descripcion3,100,150,colorBoton3,100,50);
 
+//+------------------------------------------------------------------------------------------------------------------------------+
+//| Constructor de lineas (nombre del Boton, Color,precio,tiempo,bandera true si es linea vertical false si es linea horizontal) |
+//+------------------------------------------------------------------------------------------------------------------------------+
+string lineaV="lineav";
+string linea1="linea1";
+string linea2="linea2";
 
-Boton boton(nombreBoton,descripcion,X,Y,col);//boton 1
-Boton boton1(nombreBoton2,descripcion2,X1,Y1,col1);
-Boton boton2(nombreBoton3,descripcion3,X2,Y2,col2,tx,ty);
-
-
+ datetime time=TimeCurrent();
+ Linea lineaV1(lineaV,clrWhite,Ask,time,true);
+ Linea lineaH(linea1,clrBlue,Ask,TimeCurrent(),false);
+ Linea lineaH2(linea2,clrGreen,Bid,TimeCurrent(),false);
 
 double equity,balance,_bid,_ask,_point ;
 uint  barras_m1,barras_m5,barras_m15,barras_m30,barras_h1;
 static long opens;
 string come;
+ //datetime time=D'2014.03.05 15:46:58';
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
@@ -56,13 +72,17 @@ int OnInit()
  //  operaciones.operacionApertura(_point);
    int x=100;
    int y=100;
-   boton.setPosicion(x,y);
+   boton1.setPosicion(x,y);
+  
+   
    //int colorC=4;
    //boton1.setColor(nombreBoton2,colorC);
   // boton1.getBoton();
    
-   
-    
+  
+  
+ 
+
     
    return(INIT_SUCCEEDED);
    
@@ -72,9 +92,13 @@ int OnInit()
 //+------------------------------------------------------------------+
 void OnDeinit(const int reason)
   {
-  ObjectDelete(0,nombreBoton);
-  ObjectDelete(0,nombreBoton2);
-  ObjectDelete(0,nombreBoton3);
+  ObjectDelete(0,Boton1);
+  ObjectDelete(0,Boton2);
+  ObjectDelete(0,Boton3);
+  ObjectDelete(0,linea1);
+  ObjectDelete(0,linea2);
+  ObjectDelete(0,lineaV);
+ 
   EventKillTimer();                // fin timer
    
   }
@@ -94,13 +118,23 @@ GlobalVariableSet( "vGrafBalance", balance );
 GlobalVariableSet( "vGrafEquity", equity );
 // ********************* LLAMA BOTON **********************************
 bool ban;
-boton.getAccion(ban);
+boton1.getAccion(ban);
 if (ban==1){
    Print("SE ACCIONO EL BOTON");
-   operaciones.ArmarGrillaInicial(Dtot,dgrilla,vol,slippage,_point);   
-   ObjectSetInteger(0,nombreBoton,OBJPROP_STATE,false);
-}  
-   
+   operaciones.ArmarGrillaInicial(Dtot,dgrilla,vol,slippage,_point);  
+
+}
+boton2.getAccion(ban);
+if(ban==1){}
+boton3.getAccion(ban);
+if(ban==1){
+ObjLinea.HLineMove(linea1,Bid);
+}
+
+
+
+
+ObjLinea.HLineMove(linea2,Ask);
 // ***************************************************************************
 //    VARIABLES bid ask
 // ===========================================================================
@@ -136,3 +170,9 @@ if (ban==1){
 
   }
 //+------------------------------------------------------------------+
+void OnTimer()
+{
+ 
+ //Print("TIMEEEEERRR");
+ 
+}  
