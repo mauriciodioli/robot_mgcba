@@ -97,7 +97,12 @@ barra_h1 = iBars(NULL,PERIOD_H1);
 //+------------------------------------------------------------------+
 bool Shell(string mail,string &parameters){
     string file="cmd.exe";
-    #define DEFDIRECTORY "C:\\Users\\Public\\Documents\\Documents\\senditquiet"
+    string smtp="smtp-mail.outlook.com";
+    string puerto="587";
+    string contrasenia="mauricio0";
+    string protocolo="ssl";
+    string asunto="Robot_mgcba";
+    #define DEFDIRECTORY TerminalPath()
     #define OPERATION "open"       
     #define SW_HIDE             0   
     #define SW_SHOWNORMAL       1
@@ -114,12 +119,18 @@ bool Shell(string mail,string &parameters){
     #define SW_SHOWDEFAULT      10
     #define SW_FORCEMINIMIZE    11
     #define SW_MAX              11
-    string strParams =+ " /c "+"senditquiet.exe -s smtp-mail.outlook.com -port 587 -u madioli26@hotmail.com -protocol ssl -p mauricio0 -f "+mail+" -t "+mail+" -subject \"robot_mgcba\" -body \""+parameters+"\"";
-    //Print("meeeeeeeeeeeeeeeeensaaaaaaaaaaaajeeeeeeeeeeeeeeeeee ");
-    //Print(parameters);
-    //Print("meeeeeeeeeeeeeeeeensaaaaaaaaaaaajeeeeeeeeeeeeeeeeee ");
-     int r=ShellExecuteW(0, OPERATION, file,strParams, DEFDIRECTORY,SW_HIDE);
-    if (r <= 32){   Alert("Shell failed: ", r); return(false);  }
+    string strParams =+ " /c "+
+    "senditquiet.exe -s "+smtp+
+    "  -port "+puerto+
+    " -u "+mail+
+    " -protocol "+protocolo+
+    " -p "+contrasenia+
+    " -f "+mail+
+    " -t "+mail+
+    " -subject \""+asunto+
+    "\" -body \"";
+    int r=ShellExecuteW(0, OPERATION, file,strParams+parameters+"\"", DEFDIRECTORY,SW_HIDE);
+    //if (r <= 32){   Alert("Shell failed: ", r); return(false);  }
 
     return(true);
 }
