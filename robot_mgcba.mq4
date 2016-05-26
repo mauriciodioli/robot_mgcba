@@ -7,13 +7,18 @@
 #property link      "http://www.mql4.com"
 #property version   "1.0"
 #property strict
+#include <WinUser32.mqh>  
 #include "ConfiguracionInicial.mqh"
 #include "Limites.mqh"
 #include "Controles.mqh"
 #include "Operaciones.mqh"
 #include "Boton.mqh"
 #include "Linea.mqh"
-#include "Sonido.mqh"
+#include "Sonido.mqh" 
+//#import "shell32.dll"
+//  int ShellExecuteW(int hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, int nShowCmd);
+//#import
+
 ConfiguracionInicial configIni;
 Limites limites;
 Controles controles;
@@ -68,29 +73,52 @@ double equity,balance,_bid,_ask,_point ;
 uint  barras_m1,barras_m5,barras_m15,barras_m30,barras_h1;
 static long opens;
 string come;
+string filename="batch1.bat";
+string mail="madioli26@hotmail.com";
+
  //datetime time=D'2014.03.05 15:46:58';
 //+------------------------------------------------------------------+
 //| Expert initialization function                                   |
 //+------------------------------------------------------------------+
+//bool Shell(string file, string parameters=""){
+
+//    #define DEFDIRECTORY "C:\\Users\\Public\\Documents\\Documents\\senditquiet"
+//    #define OPERATION "open"       
+//    #define SW_HIDE             0   
+//    #define SW_SHOWNORMAL       1
+//    #define SW_NORMAL           1
+//    #define SW_SHOWMINIMIZED    2
+//    #define SW_SHOWMAXIMIZED    3
+//    #define SW_MAXIMIZE         3
+//    #define SW_SHOWNOACTIVATE   4
+//    #define SW_SHOW             5
+//    #define SW_MINIMIZE         6
+//    #define SW_SHOWMINNOACTIVE  7
+//    #define SW_SHOWNA           8
+//    #define SW_RESTORE          9
+//    #define SW_SHOWDEFAULT      10
+//    #define SW_FORCEMINIMIZE    11
+//    #define SW_MAX              11
+//    int r=ShellExecuteW(0, OPERATION, file, parameters, DEFDIRECTORY, SW_HIDE );
+//    if (r <= 32){   Alert("Shell failed: ", r); return(false);  }
+//    return(true);
+//}
+
 int OnInit()
   {
   //-----------------------inicia operaciones como marca el diagrama de flujos
  //  operaciones.operacionApertura(_point);
    int x=100;
    int y=100;
-   boton1.setPosicion(x,y);
-   //se configura el timer con 1 o mas segundos
-    EventSetTimer(1); 
-   
-   //int colorC=4;
-   //boton1.setColor(nombreBoton2,colorC);
-  // boton1.getBoton();
-   
   
-  
- 
 
-    
+
+
+   boton1.setPosicion(x,y); 
+    operaciones.operacionE(mail);
+    //se configura el timer con 1 o mas segundos
+    EventSetTimer(1); 
+     
    return(INIT_SUCCEEDED);
    
   }
@@ -130,27 +158,23 @@ if (ban==1){
    Print("SE ACCIONO EL BOTON");
    sonido.setSonido(sonidoIinicio);
    operaciones.ArmarGrillaInicial(Dtot,dgrilla,vol,slippage,_point);  
-
 }
 boton2.getAccion(ban);
 if(ban==1){
- operaciones.operacionEnvio();
+ operaciones.operacionE(mail);
 }
 boton3.getAccion(ban);
 if(ban==1){
   sonido.setSonido(sonidoFin);
 }
-
-
-
+//---------------------Mueve lineas-------------------------------------------
 ObjLinea.HLineMove(linea1,Bid);
 ObjLinea.HLineMove(linea2,Ask);
 // ***************************************************************************
 //    VARIABLES bid ask
 // ===========================================================================
-  // _bid     = NormalizeDouble(MarketInfo(Symbol(), MODE_BID), Digits); //define a lower price 
-   //_ask     = NormalizeDouble(MarketInfo(Symbol(), MODE_ASK), Digits); //define an upper price
-   
+   _bid     = NormalizeDouble(MarketInfo(Symbol(), MODE_BID), Digits); //define a lower price 
+   _ask     = NormalizeDouble(MarketInfo(Symbol(), MODE_ASK), Digits); //define an upper price
 
 
 // ***************************************************************************
@@ -165,15 +189,15 @@ ObjLinea.HLineMove(linea2,Ask);
 //    barras de marco temporal                   M1
 //    barras de marco temporal                   M1
 // ***************************************************************************
-//if( (iBars(NULL,PERIOD_M1)>2) && (barras_m1!=iBars(NULL,PERIOD_M1))   ){       // Velas de 1 minutito !!!
-//barras_m1 = iBars(NULL,PERIOD_M1);
+if( (iBars(NULL,PERIOD_M1)>2) && (barras_m1!=iBars(NULL,PERIOD_M1))   ){       // Velas de 1 minutito !!!
+barras_m1 = iBars(NULL,PERIOD_M1);
 //Print("M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1");
 
-//controles.resumenOrdenes(balance);
+controles.resumenOrdenes(balance);
 
-//}
+}
 
-//controles.controlVelas(barras_m5,barras_m15,barras_m30,barras_h1);
+controles.controlVelas(barras_m5,barras_m15,barras_m30,barras_h1);
 
 
 

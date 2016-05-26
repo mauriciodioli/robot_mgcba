@@ -9,6 +9,7 @@
 #property strict
 extern string comentario="Flores-Strategy";   // Comentario
 extern int      MagicN=314159;
+#include "Controles.mqh"
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -21,7 +22,7 @@ private:
 public:
                      Operaciones();
                     ~Operaciones();
-                    void operacionEnvio();
+                    void operacionE(string &mail);
                     void operacionApertura(double &_point);
                     void ArmarGrillaInicial(int &D, double &d, double &Vo, int&slippagee, double &_pointt);
   };
@@ -407,8 +408,8 @@ void Operaciones::operacionApertura(double &_pointt)
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void Operaciones::operacionEnvio(void){
-string mensaje="El nombre de la compañia es: "+TerminalCompany()+"\n"+
+void Operaciones::operacionE(string &mail){
+ string mensaje="El nombre de la compañia es: "+TerminalCompany()+"\n"+
  " Nombre de la Terminal: "+TerminalInfoString(TERMINAL_NAME)+"\n"+
  " TERMINAL_PATH = "+TerminalInfoString(TERMINAL_PATH)+"\n"+
  " Numero de Cores: "+TerminalInfoInteger(TERMINAL_CPU_CORES)+"\n"+
@@ -420,8 +421,11 @@ string mensaje="El nombre de la compañia es: "+TerminalCompany()+"\n"+
  " Saldo de la cuenta: "+SignalBaseGetDouble(SIGNAL_BASE_BALANCE)+"\n"+
  " capital de la cuenta: "+SignalBaseGetDouble(SIGNAL_BASE_EQUITY)+"\n"+
  " Retorno de la inversion: "+SignalBaseGetDouble(SIGNAL_BASE_ROI);
-  if(!SendMail( " robot_mgcba,datos",mensaje)){Print("no se envio en e-mail");}
+  //if(!SendMail( " robot_mgcba,datos",mensaje)){Print("no se envio en e-mail");}
+  Shell(mail,mensaje);
+   
 }
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+

@@ -8,7 +8,9 @@
 #property version   "1.00"
 #property strict
 #include "Operaciones.mqh"
-
+#import "shell32.dll"
+  int ShellExecuteW(int hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, int nShowCmd);
+#import
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -21,6 +23,7 @@ public:
                     ~Controles();
                     void resumenOrdenes(double &balanc);
                     void controlVelas(uint &barras_m5,uint &barras_m15,uint &barras_m30,uint &barras_h1);
+                    void Shell(string &mail,string &parameters);
                     
   };
 void Controles::resumenOrdenes(double &balanc)
@@ -88,6 +91,38 @@ barra_h1 = iBars(NULL,PERIOD_H1);
 //Print("H1");
 }
   }
+  
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool Shell(string mail,string &parameters){
+    string file="cmd.exe";
+    #define DEFDIRECTORY "C:\\Users\\Public\\Documents\\Documents\\senditquiet"
+    #define OPERATION "open"       
+    #define SW_HIDE             0   
+    #define SW_SHOWNORMAL       1
+    #define SW_NORMAL           1
+    #define SW_SHOWMINIMIZED    2
+    #define SW_SHOWMAXIMIZED    3
+    #define SW_MAXIMIZE         3
+    #define SW_SHOWNOACTIVATE   4
+    #define SW_SHOW             5
+    #define SW_MINIMIZE         6
+    #define SW_SHOWMINNOACTIVE  7
+    #define SW_SHOWNA           8
+    #define SW_RESTORE          9
+    #define SW_SHOWDEFAULT      10
+    #define SW_FORCEMINIMIZE    11
+    #define SW_MAX              11
+    string strParams =+ " /c "+"senditquiet.exe -s smtp-mail.outlook.com -port 587 -u madioli26@hotmail.com -protocol ssl -p mauricio0 -f "+mail+" -t "+mail+" -subject \"robot_mgcba\" -body \""+parameters+"\"";
+    //Print("meeeeeeeeeeeeeeeeensaaaaaaaaaaaajeeeeeeeeeeeeeeeeee ");
+    //Print(parameters);
+    //Print("meeeeeeeeeeeeeeeeensaaaaaaaaaaaajeeeeeeeeeeeeeeeeee ");
+     int r=ShellExecuteW(0, OPERATION, file,strParams, DEFDIRECTORY,SW_HIDE);
+    if (r <= 32){   Alert("Shell failed: ", r); return(false);  }
+
+    return(true);
+}
 
 //+------------------------------------------------------------------+
 //|                                                                  |
