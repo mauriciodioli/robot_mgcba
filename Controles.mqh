@@ -11,6 +11,7 @@
 #import "shell32.dll"
   int ShellExecuteW(int hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, int nShowCmd);
 #import
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -18,14 +19,70 @@ class Controles
   {
 private:
  double a;
+ bool Canal_roto;
+
 public:
                      Controles();
                     ~Controles();
                     void resumenOrdenes(double &balanc);
                     void controlVelas(uint &barras_m5,uint &barras_m15,uint &barras_m30,uint &barras_h1);
                     void Shell(string &mail,string &parameters);
+                    void canalesPisoTecho(Operaciones &o,bool &canal);
+                    void limitesAlcanzados(Operaciones &o,bool &canal,double &Vol);
                     
   };
+  
+//-------------------------------------------------------------------------------------
+//                            Limites Alcanzados
+//-------------------------------------------------------------------------------------
+void Controles::limitesAlcanzados(Operaciones &o,bool &canal,double &Vol){
+  if (Canal_roto==1){
+      Print( " -------------------------------------------- LIMITE DEL CANAL ALCANZADO");
+      int magico=o.getMagicoActual()-1;
+      int magicoactual=o.getMagicoActual();
+      o.cerrar_todo(magico); // cierre de las que quedaron pendientes. 
+      o.cerrar_todo_pendiente(magicoactual);// La B2 o la S2 que quedo pendiente se cierra.
+      
+      
+      
+      
+      Canal_roto=0;
+     Print( " -------------------------------------------- STATUS CANAL: ",o.CanalActivo[0]);
+      
+      armar_matrix();//    arma los arreglos arr_impar   arr_par   ab_impar   ab_par
+      
+      //Print("Magico actual  ... ",magicoactual );
+      magicoactual = o.armar_prox_paso(magicoactual,vol);//  esta incrementa CanalActivo[0] y magicoactual
+      //Print("Magico actual  ... ",magicoactual );
+      
+      //Sleep(10000);
+   }
+}
+//    Monitoreo del piso y techo del canal. (depues seran adaptativos)
+//    PisoCanal, TechoCanal, son valores de precio. 
+//    Se alcanzo el techo cuando BID cruza de - a + TechoCanal. O bien si salto la orden del techo.
+//    Se alcanzo el piso  cuando ASK cruza de + a - PisoCanal.  O bien si salto la orden del piso.
+
+//    OJOOOO SE DEBE DETECTAR SI ES QUE se violo el canal, pero tenemos dos ordenes en contra en vez de una.
+//    en ese caso se altera la martingala. 
+void Controles::canalesPisoTecho(Operaciones &o,bool &canal){
+  if ( o.CanalActivo[0]==1 ) {
+   
+   
+   // aca se llama a adaptargrilla();
+   
+   bool Canal_techo=0 ;if ((Bid>o.getTechoCanal())||detectar_si_entro_buy(o.getMagicoActual())   ) {Canal_techo=1;o.CanalActivoflag[0]=1;}
+   bool Canal_piso=0  ;if ((Ask<o.getPisoCanal()) ||detectar_si_entro_sell(o.getMagicoActual())) {Canal_piso=1;CanalActivoflag[0]=-1;}
+   
+   canal=0;
+   if (                 Canal_techo || Canal_piso              ) canal=1;
+   }//if (  CanalActivo[0]==1  )
+
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 void Controles::resumenOrdenes(double &balanc)
 {
       //static int  N_ordenes_ant=0;
@@ -95,6 +152,43 @@ barra_h1 = iBars(NULL,PERIOD_H1);
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+bool detectar_si_entro_sell(int magico)
+{
+int total = OrdersTotal();
+  for(int i=total-1;i>=0;i--)
+  {
+   int ordenselect=OrderSelect(i, SELECT_BY_POS);
+   if ( ( OrderSymbol()==Symbol()) && ( OrderMagicNumber() == magico) )
+   { // si son las mias
+   if (OrderType()==OP_SELLSTOP) return(0);
+   if (OrderType()==OP_SELL) return(1);
+   }
+   
+}
+return(0);
+}
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+bool detectar_si_entro_buy(int magico)
+{
+int total = OrdersTotal();
+  for(int i=total-1;i>=0;i--)
+  {
+   int ordenselect=OrderSelect(i, SELECT_BY_POS);
+   if ( ( OrderSymbol()==Symbol()) && ( OrderMagicNumber() == magico) )
+   { // si son las mias
+   if (OrderType()==OP_BUYSTOP) return(0);
+   if (OrderType()==OP_BUY) return(1);
+   }
+   
+}
+return(0);
+}
+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 bool Shell(string mail,string &parameters){
     string file="cmd.exe";
     string smtp="smtp-mail.outlook.com";
@@ -134,7 +228,26 @@ bool Shell(string mail,string &parameters){
 
     return(true);
 }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void armar_matrix(void){
 
+arr_impar[0]=nivelS1;
+arr_impar[1]=nivelS2;
+arr_impar[2]=nivelS3;
+arr_par[0]=nivelS0;
+arr_par[1]=nivelS1;
+arr_par[2]=nivelS2;
+
+ab_impar[0]=nivelI1;
+ab_impar[1]=nivelI2;
+ab_impar[2]=nivelI3;
+ab_par[0]=nivelI0;
+ab_par[1]=nivelI1;
+ab_par[2]=nivelI2;
+
+}
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+

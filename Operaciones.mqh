@@ -18,14 +18,155 @@ class Operaciones
 private:
  double _ask;
  double _bid;
- 
+ double nivelS0;
+ uint Ticket;
+ double TechoCanal;
+ double TechoCanalp;
+ double nivelS1;
+ double nivelS2;
+ double nivelS3;
+ double nivelI0;
+ double pisoCanal;
+ double pisoCanalp;
+ double nivelI1;
+ double nivelI2;
+ double nivelI3;
+ int magicoactual;
+ bool canal_roto;
+ public:
+ int CanalActivo[10];
+ int CanalActivoflag[10];
 public:
                      Operaciones();
                     ~Operaciones();
                     void operacionE(string &mail);
                     void operacionApertura(double &_point);
-                    void ArmarGrillaInicial(int &D, double &d, double &Vo, int&slippagee, double &_pointt);
+                    void ArmarGrillaInicial(int &D, double &d, double &Vo, int&slippagee,int &magico,int &magicoAtual,double &_pointt);
+                    void cerrar_todo(int &magico);
+                    void cerrar_todo_pendiente(int &magico);
+                    int armar_prox_paso(int &magico, double &Volumenn);
+                    double getTechoCanal();
+                    int getCanalActivo();
+                    int getMagicoActual();
+                    int getPisoCanal();
+                    bool getCanalRoto();
+                    
   };
+ bool Operaciones::getCanalRoto(void){
+   return canal_roto;
+ }
+ double Operaciones::getTechoCanal(void){
+  return TechoCanal;
+ }
+ int Operaciones::getMagicoActual(void){
+  return magicoactual;
+ }
+ int Operaciones::getPisoCanal(void){
+  return pisoCanal;
+ }
+//*********************************************************************************************************  
+//******************************************Arma la Grilla inical *****************************************
+//*********************************************************************************************************    
+//*********************************************************************************************************  
+//******************************************Arma la Grilla inical *****************************************
+//********************************************************************************************************* 
+//*********************************************************************************************************  
+//******************************************Arma la Grilla inical *****************************************
+//*********************************************************************************************************  
+//*********************************************************************************************************  
+//******************************************Arma la Grilla inical *****************************************
+//*********************************************************************************************************  
+ //       H,d,Vo,desliz, magicoinicial. 
+//       Los limites los hace con magico+1. 
+//       DEVUELVE: el magico actual, y el valor en CanalActivo[n]=1
+void Operaciones::ArmarGrillaInicial(int &D, double &d, double &Vol_in, int &slippagee, int &magico,int &magicoAtual,double &_pointt ) // H,d,Vo
+{
+
+   int Nordenes = (int) (D/d) ;
+   int NBuyLimit = Nordenes/2 ;
+   int NSellLimit = Nordenes/2 ;
+   datetime _ExpDate=0; //TimeCurrent()+600*60;      // 10 horas de caducidad. 
+   CanalActivo[0]=1;
+   double Vo = 0.5*Vol_in;
+   Print("Grilla INI:   D: ",D,"  d: ",d,"  Nordenes:  ",Nordenes,"  NBuyLimit:  ",NBuyLimit,"  NSellLimit:  ",NSellLimit);
+   
+   
+   // bucle de las BUY
+   double buyPrice = NormalizeDouble(Ask , Digits);
+   nivelS0=buyPrice;
+   double buyTP    = NormalizeDouble(Ask + 10 * d *_pointt  ,Digits);
+   double buySL    = 0;
+   OrderOpenF(Symbol(),OP_BUY,Vo ,buyPrice ,slippagee,buySL,buyTP,comentario,magico,_ExpDate,Blue);
+
+   _ask=Ask;
+   
+   for (int nivel=1; nivel<=NBuyLimit ; nivel++ ) // colocamos las Buy Stop
+   {
+   
+   double nivelpip = nivel*d;
+   
+   buyPrice = NormalizeDouble(_ask + 10*nivelpip*_pointt      ,Digits);
+   buyTP    = NormalizeDouble(_ask + 10*(nivelpip+d)*_pointt  ,Digits);
+   buySL=0;
+   //Print(" nivel :",   nivel," BUY nivelpip :",   nivelpip, "  BUY Price ",buyPrice ,"  BUY TP    ",buyTP    );
+   
+   Ticket=OrderOpenF(Symbol(),OP_BUYSTOP,Vo ,buyPrice ,slippagee,buySL,buyTP,comentario,magico,_ExpDate,Blue);//}
+   if (nivel==NBuyLimit){TechoCanal = buyTP;TechoCanalp=(nivelpip+d);Print(" TechoCanal:",TechoCanal); }
+   
+   
+   }
+
+     // ***** 3ro Coloco el BUY 2Vo
+   buyPrice = TechoCanal ;       // 2Vo
+   buyTP    = NormalizeDouble(_ask + (10*1.5*TechoCanalp)*_pointt    ,Digits);
+   buySL    = NormalizeDouble(_ask + (10*0.5*TechoCanalp)*_pointt    ,Digits);
+   Ticket=OrderOpenF(Symbol(),OP_BUYSTOP,(2*Vol_in) ,buyPrice ,slippagee,buySL,buyTP,comentario,(magico+1),_ExpDate,Blue);//}
+   nivelS1=buySL    ;
+   nivelS2=buyPrice ;
+   nivelS3=buyTP    ;
+   
+   
+   
+
+
+  
+   // ***** 1ro la SELL market
+   double sellPrice = NormalizeDouble(Bid , Digits);
+   nivelI0=sellPrice;
+   double sellTP    = NormalizeDouble(Bid - 10 * d *_pointt  ,Digits);
+   double sellSL    = 0;
+   OrderOpenF(Symbol(),OP_SELL,Vo ,sellPrice,slippagee,sellSL,sellTP,comentario,magico,_ExpDate,clrRed);
+
+   _bid=Bid;
+   // ***** 2do bucle de las SELL stop
+   for (int nivel=1; nivel<=NSellLimit ; nivel++ )// colocamos las sell Stop
+   {
+   
+   double nivelpip = nivel*d;
+   
+   sellPrice  = NormalizeDouble( _bid - 10*nivelpip*_pointt      ,Digits);
+   sellTP     = NormalizeDouble( _bid - 10*(nivelpip+d)*_pointt  ,Digits);
+   Ticket=OrderOpenF(Symbol(),OP_SELLSTOP,Vo ,sellPrice,slippagee,sellSL,sellTP,comentario,magico,_ExpDate,clrRed);
+   //Print(" nivel :",   nivel," SELL nivelpip :",   nivelpip, "  SELL Price ",sellPrice ,"  SELL TP    ",sellTP  );
+      
+   if (nivel==NSellLimit){pisoCanal= sellTP  ;pisoCanalp=(nivelpip+d);Print(" PisoCanal:",pisoCanal); }
+   }
+   // ***** 3ro Coloco el SELL 2Vo
+   sellPrice = pisoCanal;       // 2Vo
+   sellTP    = NormalizeDouble(_bid - (10*1.5*pisoCanalp)*_pointt    ,Digits);
+   sellSL    = NormalizeDouble(_bid - (10*0.5*pisoCanalp)*_pointt    ,Digits);
+   //MagicN=31415901;
+   Ticket=OrderOpenF(Symbol(),OP_SELLSTOP,(2*Vol_in) ,sellPrice ,slippagee,sellSL,sellTP,comentario,(magico+1),_ExpDate,clrRed);//}
+   nivelI1=sellSL    ;
+   nivelI2=sellPrice ;
+   nivelI3=sellTP    ;
+
+   
+   
+
+   //return(magico+1);
+}
+
 //+----------------------------------------------------------------------------------------------------------------------+
 //+----------------------------------------------------------------------------------------------------------------------+
 //+----------------------------------------------------------------------------------------------------------------------+
@@ -315,87 +456,6 @@ int OrderOpenF(string     OO_symbol,
       }
    return(result);
   }
-  
-//*********************************************************************************************************  
-//******************************************Arma la Grilla inical *****************************************
-//*********************************************************************************************************    
-//*********************************************************************************************************  
-//******************************************Arma la Grilla inical *****************************************
-//********************************************************************************************************* 
-//*********************************************************************************************************  
-//******************************************Arma la Grilla inical *****************************************
-//*********************************************************************************************************  
-//*********************************************************************************************************  
-//******************************************Arma la Grilla inical *****************************************
-//*********************************************************************************************************  
- 
-void Operaciones::ArmarGrillaInicial(int &D, double &d, double &Vo, int &slippagee, double &_pointt ) // H,d,Vo
-{
-
-   int Nordenes = (int) (D/d) ;
-   int NBuyLimit = Nordenes/2 ;
-   int NSellLimit = Nordenes/2 ;
-   datetime _ExpDate=0; //TimeCurrent()+600*60;      // 10 horas de caducidad. 
-   
-
-   Print("Grilla INI:   D: ",D,"  d: ",d,"  Nordenes:  ",Nordenes,"  NBuyLimit:  ",NBuyLimit,"  NSellLimit:  ",NSellLimit);
-   
-   
-   // bucle de las BUY
-   double buyPrice = NormalizeDouble(Ask , Digits);
-   double buyTP    = NormalizeDouble(Ask + 10 * d *_pointt  ,Digits);
-   double buySL    = 0;
-   OrderOpenF(Symbol(),OP_BUY,Vo ,buyPrice ,slippagee,buySL,buyTP,comentario,MagicN,_ExpDate,Blue);
-
-   _ask=Ask;
-   
-   for (int nivel=1; nivel<=NBuyLimit ; nivel++ ) // colocamos las Buy Stop
-   {
-   
-   double nivelpip = nivel*d;
-   
-   buyPrice = NormalizeDouble(_ask + 10*nivelpip*_pointt      ,Digits);
-   buyTP    = NormalizeDouble(_ask + 10*(nivelpip+d)*_pointt  ,Digits);
-   //buySL=NormalizeDouble(_bid-StopLoss*_point,Digits);
-   
-   Print(" nivel :",   nivel," BUY nivelpip :",   nivelpip, "  BUY Price ",buyPrice ,"  BUY TP    ",buyTP    );
-   
-   OrderOpenF(Symbol(),OP_BUYSTOP,Vo ,buyPrice ,slippagee,buySL,buyTP,comentario,MagicN,_ExpDate,Blue);//}
-   
-   
-   }
-
-  
-   // bucle de las SELL
-   double sellPrice = NormalizeDouble(Bid , Digits);
-   double sellTP    = NormalizeDouble(Bid - 10 * d *_pointt  ,Digits);
-   double sellSL    = 0;
-   OrderOpenF(Symbol(),OP_SELL,Vo ,sellPrice,slippagee,sellSL,sellTP,comentario,MagicN,_ExpDate,clrRed);
-
-   _bid=Bid;
-   for (int nivel=1; nivel<=NSellLimit ; nivel++ )// colocamos las sell Stop
-   {
-   
-   double nivelpip = nivel*d;
-   
-   sellPrice  = NormalizeDouble( _bid - 10*nivelpip*_pointt      ,Digits);
-   sellTP     = NormalizeDouble( _bid - 10*(nivelpip+d)*_pointt  ,Digits);
-   
-   Print(" nivel :",   nivel," SELL nivelpip :",   nivelpip, "  SELL Price ",sellPrice ,"  SELL TP    ",sellTP  );
-   
-   //if (nivel!=0){
-   OrderOpenF(Symbol(),OP_SELLSTOP,Vo ,sellPrice,slippagee,sellSL,sellTP,comentario,MagicN,_ExpDate,clrRed);//}
-   //if (nivel==0){}
-   }
-
-   
-   
-
-
-
-
-
-}
 
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -424,6 +484,143 @@ void Operaciones::operacionE(string &mail){
    Shell(mail,mensaje);   
 }
 
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+// GESTION DE ORDENES: Cerrar todas las ordenes activas 
+void Operaciones::cerrar_todo(int &magico)
+{
+
+int total = OrdersTotal();
+bool result = true;
+  for(int i=total-1;i>=0;i--)
+  {
+
+      int ordenselect=OrderSelect(i, SELECT_BY_POS);
+      int type    = OrderType();
+      
+      
+      if ( ( OrderSymbol()==Symbol()) && ( OrderMagicNumber() == magico) ) // si son las mias
+      {
+
+            // aca voy a tener que elejir las que sean de un canal determinado. No todas.
+
+            switch(type)
+            {
+               //Close pending orders
+               case OP_BUYLIMIT  : result = OrderDelete( OrderTicket() ); break;
+               case OP_BUYSTOP   : result = OrderDelete( OrderTicket() ); break;
+               case OP_SELLLIMIT : result = OrderDelete( OrderTicket() ); break;
+               case OP_SELLSTOP  : result = OrderDelete( OrderTicket() ); break;
+               case OP_BUY       : result = OrderClose( OrderTicket(), OrderLots(), MarketInfo(OrderSymbol(), MODE_BID), 5, Red );  break;
+               case OP_SELL      : result = OrderClose( OrderTicket(), OrderLots(), MarketInfo(OrderSymbol(), MODE_ASK), 5, Red );  break;  
+            
+            
+            }  
+
+      }
+      if(result == false)
+      {
+      Print("cerrar_todo: Order " , OrderTicket() , " failed to close. Error:" , GetLastError() );
+      Sleep(3000);
+      }  
+
+}
+}
+// GESTION DE ORDENES: Cerrar todas las ordenes PENDIENTES
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void Operaciones::cerrar_todo_pendiente(int &magico)
+{
+int total = OrdersTotal();
+bool result = true;
+  for(int i=total-1;i>=0;i--)
+  {
+      int ordenselect=OrderSelect(i, SELECT_BY_POS);
+      int type    = OrderType();
+
+
+      if ( ( OrderSymbol()==Symbol()) && ( OrderMagicNumber() == magico) ) // si son las mias
+      {
+
+            // aca voy a tener que elejir las que sean de un canal determinado. No todas.
+
+            switch(type)
+            {
+               //Close pending orders
+               case OP_BUYSTOP   : result = OrderDelete( OrderTicket() ); break;
+               case OP_SELLSTOP  : result = OrderDelete( OrderTicket() ); break;
+            }  
+
+      }
+      if(result == false)
+      {
+      Print("Cerrar_todo_pendiente: Order " , OrderTicket() , " failed to close. Error:" , GetLastError() );
+      //Sleep(3000);
+      }  
+
+}
+}
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+int Operaciones::armar_prox_paso(int &magico, double &Volumenn){
+
+
+      CanalActivo[0]++;       
+      int magicoo = magico;
+      magicoo ++;
+            
+      double Vo=Volumenn*MathPow(2,CanalActivo[0]);
+      
+      
+if (CanalActivoflag[0]==1){         // ARRIBA
+
+
+if ((CanalActivo[0]&1)==1){         // IMPAR
+   double buySL = arr_impar[0];     //SL
+   double buyPrice = arr_impar[1];  //B
+   double buyTP = arr_impar[2];     //TP
+Ticket=OrderOpenF(Symbol(),OP_BUYSTOP,(Vo) ,buyPrice ,10,buySL,buyTP,comentario,magicoo,0,Blue);
+buy_TP_actual=buyTP;
+}
+
+if ((CanalActivo[0]&1)==0){      // PAR
+double sellTP = arr_par[0];      //TP
+double sellPrice = arr_par[1];   //S
+double sellSL = arr_par[2];      //SL
+Ticket=OrderOpenF(Symbol(),OP_SELLSTOP,(Vo) ,sellPrice,10,sellSL,sellTP,comentario,magicoo,0,clrRed);
+sell_TP_actual=sellTP;
+}
+
+}
+
+
+if (CanalActivoflag[0]==-1){        // ABAJO
+
+if ((CanalActivo[0]&1)==1){      // IMPAR
+double sellSL = ab_impar[0];     //SL
+double sellPrice = ab_impar[1];  //S   
+double sellTP = ab_impar[2];     //TP
+Ticket=OrderOpenF(Symbol(),OP_SELLSTOP,(Vo) ,sellPrice,10,sellSL,sellTP,comentario,magicoo,0,clrRed);
+sell_TP_actual=sellTP;
+}
+
+if ((CanalActivo[0]&1)==0){      // PAR
+double buyTP = ab_par[0];        //TP
+double buyPrice = ab_par[1];     //B
+double buySL = ab_par[2];        //SL
+Ticket=OrderOpenF(Symbol(),OP_BUYSTOP,(Vo) ,buyPrice ,10,buySL,buyTP,comentario,magicoo,0,Blue);
+buy_TP_actual=buyTP;
+}
+
+
+
+}
+
+return (magicoo);
+}
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+

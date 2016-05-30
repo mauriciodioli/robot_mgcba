@@ -68,6 +68,9 @@ string linea2="linea2";
 double equity,balance,_bid,_ask,_point ;
 uint  barras_m1,barras_m5,barras_m15,barras_m30,barras_h1;
 static long opens;
+static int magicoini=MagicN,magicoactual;
+bool canal_roto=0;
+int CanalActivoflag[10];   // 10 flags de si un canal esta activo
 string come;
 string email="madioli26@hotmail.com";
 
@@ -118,14 +121,22 @@ equity = AccountEquity();
 balance = AccountBalance();
 GlobalVariableSet( "vGrafBalance", balance );
 GlobalVariableSet( "vGrafEquity", equity );
+
 // ********************* LLAMA BOTON **********************************
 bool ban;
 boton1.getAccion(ban);
 if (ban==1){
    Print("SE ACCIONO EL BOTON");
    sonido.setSonido(sonidoIinicio);
-   operaciones.ArmarGrillaInicial(Dtot,dgrilla,vol,slippage,_point);  
+   operaciones.ArmarGrillaInicial(Dtot,dgrilla,vol,slippage, magicoini,magicoactual,_point);  
 }
+// Monitoreo del piso y techo del canal. (depues seran adaptativos)
+controles.canalesPisoTecho(operaciones,canal_roto);
+//   Limites alcanzados
+controles.limitesAlcanzados(operaciones,canal_roto,vol);
+
+
+
 boton2.getAccion(ban);
 if(ban==1){
  operaciones.operacionE(email);
