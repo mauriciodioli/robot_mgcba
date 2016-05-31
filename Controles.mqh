@@ -28,14 +28,14 @@ public:
                     void controlVelas(uint &barras_m5,uint &barras_m15,uint &barras_m30,uint &barras_h1);
                     void Shell(string &mail,string &parameters);
                     void canalesPisoTecho(Operaciones &o,bool &canal);
-                    void limitesAlcanzados(Operaciones &o,bool &canal,double &Vol);
+                    bool limitesAlcanzados(Operaciones &o,bool &canal,double &Vol);
                     
   };
   
 //-------------------------------------------------------------------------------------
 //                            Limites Alcanzados
 //-------------------------------------------------------------------------------------
-void Controles::limitesAlcanzados(Operaciones &o,bool &canal,double &Vol){
+/*bool Controles::limitesAlcanzados(Operaciones &o,bool &canal,double &Vol){
   if (Canal_roto==1){
       Print( " -------------------------------------------- LIMITE DEL CANAL ALCANZADO");
       int magico=o.getMagicoActual()-1;
@@ -49,13 +49,14 @@ void Controles::limitesAlcanzados(Operaciones &o,bool &canal,double &Vol){
       Canal_roto=0;
      Print( " -------------------------------------------- STATUS CANAL: ",o.CanalActivo[0]);
       
-      armar_matrix();//    arma los arreglos arr_impar   arr_par   ab_impar   ab_par
+      o.armar_matrix();//    arma los arreglos arr_impar   arr_par   ab_impar   ab_par
       
       //Print("Magico actual  ... ",magicoactual );
       magicoactual = o.armar_prox_paso(magicoactual,vol);//  esta incrementa CanalActivo[0] y magicoactual
       //Print("Magico actual  ... ",magicoactual );
       
       //Sleep(10000);
+      
    }
 }
 //    Monitoreo del piso y techo del canal. (depues seran adaptativos)
@@ -79,11 +80,11 @@ void Controles::canalesPisoTecho(Operaciones &o,bool &canal){
    }//if (  CanalActivo[0]==1  )
 
 }
-
+*/
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void Controles::resumenOrdenes(double &balanc)
+/*void Controles::resumenOrdenes(double &balanc)
 {
       //static int  N_ordenes_ant=0;
    int  N_ordenes=OrdersTotal();
@@ -122,7 +123,7 @@ void Controles::resumenOrdenes(double &balanc)
             "__ SELL:",Ordenes_Sell,
             "__ Balance:",balanc);
 }
-
+*/
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -228,26 +229,7 @@ bool Shell(string mail,string &parameters){
 
     return(true);
 }
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-void armar_matrix(void){
 
-arr_impar[0]=nivelS1;
-arr_impar[1]=nivelS2;
-arr_impar[2]=nivelS3;
-arr_par[0]=nivelS0;
-arr_par[1]=nivelS1;
-arr_par[2]=nivelS2;
-
-ab_impar[0]=nivelI1;
-ab_impar[1]=nivelI2;
-ab_impar[2]=nivelI3;
-ab_par[0]=nivelI0;
-ab_par[1]=nivelI1;
-ab_par[2]=nivelI2;
-
-}
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+

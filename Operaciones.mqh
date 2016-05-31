@@ -7,9 +7,8 @@
 #property link      "http://www.mql4.com"
 #property version   "1.00"
 #property strict
-extern string comentario="Flores-Strategy";   // Comentario
-extern int      MagicN=314159;
 #include "Controles.mqh"
+#include "Mg.mqh"
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -18,154 +17,53 @@ class Operaciones
 private:
  double _ask;
  double _bid;
- double nivelS0;
+ double _point;
  uint Ticket;
- double TechoCanal;
- double TechoCanalp;
- double nivelS1;
- double nivelS2;
- double nivelS3;
- double nivelI0;
- double pisoCanal;
- double pisoCanalp;
- double nivelI1;
- double nivelI2;
- double nivelI3;
+ double arr_par[3];
+ double arr_impar[3];
+ double ab_par[3];
+ double ab_impar[3];
  int magicoactual;
- bool canal_roto;
+ 
  public:
- int CanalActivo[10];
+
  int CanalActivoflag[10];
 public:
                      Operaciones();
-                    ~Operaciones();
-                    void operacionE(string &mail);
+                    ~Operaciones();    
+                    int OrderOpenF(string &OO_symbol,
+                                    int &OO_cmd,
+                                    double &OO_volume,
+                                    double &OO_price,
+                                    int &OO_slippage,
+                                    double &OO_stoploss,
+                                    double &OO_takeprofit,
+                                    string &OO_comment,
+                                    int &OO_magic,
+                                    datetime &OO_expiration,
+                                    color &OO_arrow_color);  
                     void operacionApertura(double &_point);
-                    void ArmarGrillaInicial(int &D, double &d, double &Vo, int&slippagee,int &magico,int &magicoAtual,double &_pointt);
                     void cerrar_todo(int &magico);
                     void cerrar_todo_pendiente(int &magico);
                     int armar_prox_paso(int &magico, double &Volumenn);
-                    double getTechoCanal();
-                    int getCanalActivo();
+                    void operacionE(string &mail);
+                    void arma_matrix(Mg &m);
+                    void setMagicoActual(int&magicoActual);
                     int getMagicoActual();
-                    int getPisoCanal();
-                    bool getCanalRoto();
+                   
+                   
                     
   };
- bool Operaciones::getCanalRoto(void){
-   return canal_roto;
- }
- double Operaciones::getTechoCanal(void){
-  return TechoCanal;
+  
+//----------------------------------------------------------------------
+//                   zona de get y set
+//----------------------------------------------------------------------
+ void Operaciones::setMagicoActual(int&magicoActual){
+   magicoactual=magicoActual;
  }
  int Operaciones::getMagicoActual(void){
   return magicoactual;
  }
- int Operaciones::getPisoCanal(void){
-  return pisoCanal;
- }
-//*********************************************************************************************************  
-//******************************************Arma la Grilla inical *****************************************
-//*********************************************************************************************************    
-//*********************************************************************************************************  
-//******************************************Arma la Grilla inical *****************************************
-//********************************************************************************************************* 
-//*********************************************************************************************************  
-//******************************************Arma la Grilla inical *****************************************
-//*********************************************************************************************************  
-//*********************************************************************************************************  
-//******************************************Arma la Grilla inical *****************************************
-//*********************************************************************************************************  
- //       H,d,Vo,desliz, magicoinicial. 
-//       Los limites los hace con magico+1. 
-//       DEVUELVE: el magico actual, y el valor en CanalActivo[n]=1
-void Operaciones::ArmarGrillaInicial(int &D, double &d, double &Vol_in, int &slippagee, int &magico,int &magicoAtual,double &_pointt ) // H,d,Vo
-{
-
-   int Nordenes = (int) (D/d) ;
-   int NBuyLimit = Nordenes/2 ;
-   int NSellLimit = Nordenes/2 ;
-   datetime _ExpDate=0; //TimeCurrent()+600*60;      // 10 horas de caducidad. 
-   CanalActivo[0]=1;
-   double Vo = 0.5*Vol_in;
-   Print("Grilla INI:   D: ",D,"  d: ",d,"  Nordenes:  ",Nordenes,"  NBuyLimit:  ",NBuyLimit,"  NSellLimit:  ",NSellLimit);
-   
-   
-   // bucle de las BUY
-   double buyPrice = NormalizeDouble(Ask , Digits);
-   nivelS0=buyPrice;
-   double buyTP    = NormalizeDouble(Ask + 10 * d *_pointt  ,Digits);
-   double buySL    = 0;
-   OrderOpenF(Symbol(),OP_BUY,Vo ,buyPrice ,slippagee,buySL,buyTP,comentario,magico,_ExpDate,Blue);
-
-   _ask=Ask;
-   
-   for (int nivel=1; nivel<=NBuyLimit ; nivel++ ) // colocamos las Buy Stop
-   {
-   
-   double nivelpip = nivel*d;
-   
-   buyPrice = NormalizeDouble(_ask + 10*nivelpip*_pointt      ,Digits);
-   buyTP    = NormalizeDouble(_ask + 10*(nivelpip+d)*_pointt  ,Digits);
-   buySL=0;
-   //Print(" nivel :",   nivel," BUY nivelpip :",   nivelpip, "  BUY Price ",buyPrice ,"  BUY TP    ",buyTP    );
-   
-   Ticket=OrderOpenF(Symbol(),OP_BUYSTOP,Vo ,buyPrice ,slippagee,buySL,buyTP,comentario,magico,_ExpDate,Blue);//}
-   if (nivel==NBuyLimit){TechoCanal = buyTP;TechoCanalp=(nivelpip+d);Print(" TechoCanal:",TechoCanal); }
-   
-   
-   }
-
-     // ***** 3ro Coloco el BUY 2Vo
-   buyPrice = TechoCanal ;       // 2Vo
-   buyTP    = NormalizeDouble(_ask + (10*1.5*TechoCanalp)*_pointt    ,Digits);
-   buySL    = NormalizeDouble(_ask + (10*0.5*TechoCanalp)*_pointt    ,Digits);
-   Ticket=OrderOpenF(Symbol(),OP_BUYSTOP,(2*Vol_in) ,buyPrice ,slippagee,buySL,buyTP,comentario,(magico+1),_ExpDate,Blue);//}
-   nivelS1=buySL    ;
-   nivelS2=buyPrice ;
-   nivelS3=buyTP    ;
-   
-   
-   
-
-
-  
-   // ***** 1ro la SELL market
-   double sellPrice = NormalizeDouble(Bid , Digits);
-   nivelI0=sellPrice;
-   double sellTP    = NormalizeDouble(Bid - 10 * d *_pointt  ,Digits);
-   double sellSL    = 0;
-   OrderOpenF(Symbol(),OP_SELL,Vo ,sellPrice,slippagee,sellSL,sellTP,comentario,magico,_ExpDate,clrRed);
-
-   _bid=Bid;
-   // ***** 2do bucle de las SELL stop
-   for (int nivel=1; nivel<=NSellLimit ; nivel++ )// colocamos las sell Stop
-   {
-   
-   double nivelpip = nivel*d;
-   
-   sellPrice  = NormalizeDouble( _bid - 10*nivelpip*_pointt      ,Digits);
-   sellTP     = NormalizeDouble( _bid - 10*(nivelpip+d)*_pointt  ,Digits);
-   Ticket=OrderOpenF(Symbol(),OP_SELLSTOP,Vo ,sellPrice,slippagee,sellSL,sellTP,comentario,magico,_ExpDate,clrRed);
-   //Print(" nivel :",   nivel," SELL nivelpip :",   nivelpip, "  SELL Price ",sellPrice ,"  SELL TP    ",sellTP  );
-      
-   if (nivel==NSellLimit){pisoCanal= sellTP  ;pisoCanalp=(nivelpip+d);Print(" PisoCanal:",pisoCanal); }
-   }
-   // ***** 3ro Coloco el SELL 2Vo
-   sellPrice = pisoCanal;       // 2Vo
-   sellTP    = NormalizeDouble(_bid - (10*1.5*pisoCanalp)*_pointt    ,Digits);
-   sellSL    = NormalizeDouble(_bid - (10*0.5*pisoCanalp)*_pointt    ,Digits);
-   //MagicN=31415901;
-   Ticket=OrderOpenF(Symbol(),OP_SELLSTOP,(2*Vol_in) ,sellPrice ,slippagee,sellSL,sellTP,comentario,(magico+1),_ExpDate,clrRed);//}
-   nivelI1=sellSL    ;
-   nivelI2=sellPrice ;
-   nivelI3=sellTP    ;
-
-   
-   
-
-   //return(magico+1);
-}
 
 //+----------------------------------------------------------------------------------------------------------------------+
 //+----------------------------------------------------------------------------------------------------------------------+
@@ -184,17 +82,17 @@ void Operaciones::ArmarGrillaInicial(int &D, double &d, double &Vol_in, int &sli
 //| arrow_color - open arrow color on a chart. If the parameter is absent or equal to CLR_NONE,                          |
 //|               the open arrow is not displayed on a chart.                                                            |
 //+----------------------------------------------------------------------------------------------------------------------+
-int OrderOpenF(string     OO_symbol,
-               int        OO_cmd,
-               double     OO_volume,
-               double     OO_price,
-               int        OO_slippage,
-               double     OO_stoploss,
-               double     OO_takeprofit,
-               string     OO_comment,
-               int        OO_magic,
-               datetime   OO_expiration,
-               color      OO_arrow_color)
+int Operaciones::OrderOpenF(string &OO_symbol,
+               int      &OO_cmd,
+               double   &OO_volume,
+               double   &OO_price,
+               int      &OO_slippage,
+               double   &OO_stoploss,
+               double   &OO_takeprofit,
+               string   &OO_comment,
+               int      &OO_magic,
+               datetime &OO_expiration,
+               color    &OO_arrow_color)
   {
    int      result      = -1;    //result of opening an order
    int      Error       = 0;     //error when opening an order
@@ -457,14 +355,7 @@ int OrderOpenF(string     OO_symbol,
    return(result);
   }
 
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-void Operaciones::operacionApertura(double &_pointt)
-  {
-     _pointt   = MarketInfo(Symbol(), MODE_POINT);
-     EventSetTimer(5);                   // timer  
-  }
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -565,7 +456,7 @@ bool result = true;
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-int Operaciones::armar_prox_paso(int &magico, double &Volumenn){
+/*int Operaciones::armar_prox_paso(int &magico, double &Volumenn){
 
 
       CanalActivo[0]++;       
@@ -620,7 +511,28 @@ buy_TP_actual=buyTP;
 }
 
 return (magicoo);
-}
+}*/
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+/*
+void Operaciones::armar_matrix(Mg &m){
+
+arr_impar[0]=m.getNivelS1();
+arr_impar[1]=m.getNivelS2();
+arr_impar[2]=m.getNivelS3();
+arr_par[0]=m.getNivelS0();
+arr_par[1]=m.getNivelS1();
+arr_par[2]=m.getNivelS2();
+
+ab_impar[0]=m.getNivelI1();
+ab_impar[1]=m.getNivelI2();
+ab_impar[2]=m.getNivelS3();
+ab_par[0]=m.getNivelI0();
+ab_par[1]=m.getNivelI1();
+ab_par[2]=m.getNivelI2();
+
+}*/
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+

@@ -15,12 +15,16 @@
 #include "Boton.mqh"
 #include "Linea.mqh"
 #include "Sonido.mqh" 
+#include "Grilla.mqh"
+#include "Mg.mqh"
 ConfiguracionInicial configIni;
 Limites limites;
 Controles controles;
 Operaciones operaciones;
 Linea ObjLinea;
 Sonido sonido;
+Grilla grilla;
+Mg mg1;
  
 //*********************************************************************
 //--------------------------Configuracion de parametros-----------
@@ -81,7 +85,7 @@ string email="madioli26@hotmail.com";
 int OnInit()
   {
   //-----------------------inicia operaciones como marca el diagrama de flujos
- //  operaciones.operacionApertura(_point);
+   grilla.setPoint();
    int x=100;
    int y=100;
    boton1.setPosicion(x,y); 
@@ -126,14 +130,18 @@ GlobalVariableSet( "vGrafEquity", equity );
 bool ban;
 boton1.getAccion(ban);
 if (ban==1){
-   Print("SE ACCIONO EL BOTON");
+   Print("SE ACCIONO EL BOTON INICIO");
    sonido.setSonido(sonidoIinicio);
-   operaciones.ArmarGrillaInicial(Dtot,dgrilla,vol,slippage, magicoini,magicoactual,_point);  
+   grilla.ArmarGrillaInicial(Dtot,dgrilla,vol,slippage, magicoini,mg1,operaciones);  
+  
 }
 // Monitoreo del piso y techo del canal. (depues seran adaptativos)
-controles.canalesPisoTecho(operaciones,canal_roto);
+//controles.canalesPisoTecho(operaciones,canal_roto);
 //   Limites alcanzados
-controles.limitesAlcanzados(operaciones,canal_roto,vol);
+//controles.limitesAlcanzados(operaciones,canal_roto,vol);
+      //Print("Magico actual  ... ",magicoactual );
+  //   operaciones.setMagicoActual(o.armar_prox_paso(magicoactual,vol));//  esta incrementa CanalActivo[0] y magicoactual
+      //Print("Magico actual  ... ",magicoactual );
 
 
 
@@ -171,11 +179,11 @@ if( (iBars(NULL,PERIOD_M1)>2) && (barras_m1!=iBars(NULL,PERIOD_M1))   ){       /
 barras_m1 = iBars(NULL,PERIOD_M1);
 //Print("M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1");
 
-controles.resumenOrdenes(balance);
+//controles.resumenOrdenes(balance);
 
 }
 
-controles.controlVelas(barras_m5,barras_m15,barras_m30,barras_h1);
+//controles.controlVelas(barras_m5,barras_m15,barras_m30,barras_h1);
 
 
 
