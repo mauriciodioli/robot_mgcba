@@ -7,63 +7,53 @@
 #property link      "http://www.mql4.com"
 #property version   "1.00"
 #property strict
+
 #include "Controles.mqh"
 #include "Mg.mqh"
+#include "Operaciones.mqh"
+
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 class Operaciones
   {
 private:
- double _ask;
- double _bid;
- double _point;
- uint Ticket;
- double arr_par[3];
- double arr_impar[3];
- double ab_par[3];
- double ab_impar[3];
- int magicoactual;
- 
- public:
-
- int CanalActivoflag[10];
+   double _ask;
+   double _bid;
+   double _point;
+   uint   Ticket;
+   int    magicoactual;
+public:
+   int CanalActivoflag[10];
+   double arr_par[3];
+   double arr_impar[3];
+   double ab_par[3];
+   double ab_impar[3];
 public:
                      Operaciones();
-                    ~Operaciones();    
-                    int OrderOpenF(string &OO_symbol,
-                                    int &OO_cmd,
-                                    double &OO_volume,
-                                    double &OO_price,
-                                    int &OO_slippage,
-                                    double &OO_stoploss,
-                                    double &OO_takeprofit,
-                                    string &OO_comment,
-                                    int &OO_magic,
-                                    datetime &OO_expiration,
-                                    color &OO_arrow_color);  
-                    void operacionApertura(double &_point);
-                    void cerrar_todo(int &magico);
-                    void cerrar_todo_pendiente(int &magico);
-                    int armar_prox_paso(int &magico, double &Volumenn);
-                    void operacionE(string &mail);
-                    void arma_matrix(Mg &m);
-                    void setMagicoActual(int&magicoActual);
-                    int getMagicoActual();
-                   
-                   
-                    
+                    ~Operaciones();
+   int OrderOpenF(string &OO_symbol,
+                                int &OO_cmd,
+                                double &OO_volume,
+                                double &OO_price,
+                                int &OO_slippage,
+                                double &OO_stoploss,
+                                double &OO_takeprofit,
+                                string &OO_comment,
+                                int &OO_magic,
+                                datetime &OO_expiration,
+                                color &OO_arrow_color);
+   void operacionApertura(double &point);
+   void cerrar_todo(int &magico);
+   void cerrar_todo_pendiente(int &magico);
+   void operacionE(string &mail);
+   void arma_matrix(Mg &_mg);
+   
   };
-  
 //----------------------------------------------------------------------
 //                   zona de get y set
 //----------------------------------------------------------------------
- void Operaciones::setMagicoActual(int&magicoActual){
-   magicoactual=magicoActual;
- }
- int Operaciones::getMagicoActual(void){
-  return magicoactual;
- }
 
 //+----------------------------------------------------------------------------------------------------------------------+
 //+----------------------------------------------------------------------------------------------------------------------+
@@ -83,16 +73,16 @@ public:
 //|               the open arrow is not displayed on a chart.                                                            |
 //+----------------------------------------------------------------------------------------------------------------------+
 int Operaciones::OrderOpenF(string &OO_symbol,
-               int      &OO_cmd,
-               double   &OO_volume,
-               double   &OO_price,
-               int      &OO_slippage,
-               double   &OO_stoploss,
-               double   &OO_takeprofit,
-               string   &OO_comment,
-               int      &OO_magic,
-               datetime &OO_expiration,
-               color    &OO_arrow_color)
+                            int      &OO_cmd,
+                            double   &OO_volume,
+                            double   &OO_price,
+                            int      &OO_slippage,
+                            double   &OO_stoploss,
+                            double   &OO_takeprofit,
+                            string   &OO_comment,
+                            int      &OO_magic,
+                            datetime &OO_expiration,
+                            color    &OO_arrow_color)
   {
    int      result      = -1;    //result of opening an order
    int      Error       = 0;     //error when opening an order
@@ -234,7 +224,7 @@ int Operaciones::OrderOpenF(string &OO_symbol,
             case 132:
                Sleep(10000);                                         //sleep for 10 seconds
                RefreshRates();                                       //update data
-               //exit_loop = true;                                   //exit while
+                                                                     //exit_loop = true;                                   //exit while
                break;                                                //exit switch
             case 133:
                exit_loop=true;                                       //exit while
@@ -345,194 +335,132 @@ int Operaciones::OrderOpenF(string &OO_symbol,
       //--- if no errors detected
       else
         {
-         Print("The order is successfully opened.", result);
+         Print("The order is successfully opened.",result);
          Error = 0;                                //reset the error code to zero
          break;                                    //exit while
-         //errorCount =0;                          //reset the amount of attempts to zero
+                                                   //errorCount =0;                          //reset the amount of attempts to zero
         }
-        
-      }
+
+     }
    return(result);
   }
-
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void Operaciones::operacionE(string &mail){
- string mensaje="El nombre de la compañia es: "+TerminalCompany()+
- "; Nombre de la Terminal: "+TerminalInfoString(TERMINAL_NAME)+
- "; TERMINAL_PATH = "+TerminalInfoString(TERMINAL_PATH)+
- "; Numero de Cores: "+TerminalInfoInteger(TERMINAL_CPU_CORES)+
- "; Tipo de cuenta  (0-real, 1-demo, 2-contest): "+SignalBaseGetInteger(SIGNAL_BASE_TRADE_MODE)+
- "; Numero de operaciones: "+SignalBaseGetInteger(SIGNAL_BASE_TRADES)+
- "; Monitoreo de fecha de inicio: "+SignalBaseGetInteger(SIGNAL_BASE_DATE_STARTED)+
- "; apalancamiento cuenta: "+SignalBaseGetInteger(SIGNAL_BASE_LEVERAGE)+
- "; Beneficio en pips: "+SignalBaseGetInteger(SIGNAL_BASE_PIPS)+
- "; Saldo de la cuenta: "+SignalBaseGetDouble(SIGNAL_BASE_BALANCE)+
- "; capital de la cuenta: "+SignalBaseGetDouble(SIGNAL_BASE_EQUITY)+
- "; Retorno de la inversion: "+SignalBaseGetDouble(SIGNAL_BASE_ROI);
-   Shell(mail,mensaje);   
-}
-
+void Operaciones::operacionE(string &mail)
+  {
+   string mensaje="El nombre de la compañia es: "+TerminalCompany()+
+                  "; Nombre de la Terminal: "+TerminalInfoString(TERMINAL_NAME)+
+                  "; TERMINAL_PATH = "+TerminalInfoString(TERMINAL_PATH)+
+                  "; Numero de Cores: "+DoubleToString(TerminalInfoInteger(TERMINAL_CPU_CORES))+
+                  "; Tipo de cuenta  (0-real, 1-demo, 2-contest): "+IntegerToString(SignalBaseGetInteger(SIGNAL_BASE_TRADE_MODE))+
+                  "; Numero de operaciones: "+DoubleToString(SignalBaseGetInteger(SIGNAL_BASE_TRADES))+
+                  "; Monitoreo de fecha de inicio: "+DoubleToString(SignalBaseGetInteger(SIGNAL_BASE_DATE_STARTED))+
+                  "; apalancamiento cuenta: "+DoubleToString(SignalBaseGetInteger(SIGNAL_BASE_LEVERAGE))+
+                  "; Beneficio en pips: "+DoubleToString(SignalBaseGetInteger(SIGNAL_BASE_PIPS))+
+                  "; Saldo de la cuenta: "+DoubleToString(SignalBaseGetDouble(SIGNAL_BASE_BALANCE))+
+                  "; capital de la cuenta: "+DoubleToString(SignalBaseGetDouble(SIGNAL_BASE_EQUITY))+
+                  "; Retorno de la inversion: "+DoubleToString(SignalBaseGetDouble(SIGNAL_BASE_ROI));
+   Shell(mail,mensaje);
+  }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 // GESTION DE ORDENES: Cerrar todas las ordenes activas 
 void Operaciones::cerrar_todo(int &magico)
-{
-
-int total = OrdersTotal();
-bool result = true;
-  for(int i=total-1;i>=0;i--)
   {
 
-      int ordenselect=OrderSelect(i, SELECT_BY_POS);
-      int type    = OrderType();
-      
-      
-      if ( ( OrderSymbol()==Symbol()) && ( OrderMagicNumber() == magico) ) // si son las mias
-      {
+   int total=OrdersTotal();
+   bool result=true;
+   for(int i=total-1;i>=0;i--)
+     {
 
-            // aca voy a tener que elejir las que sean de un canal determinado. No todas.
+      int ordenselect=OrderSelect(i,SELECT_BY_POS);
+      int type=OrderType();
 
-            switch(type)
-            {
-               //Close pending orders
-               case OP_BUYLIMIT  : result = OrderDelete( OrderTicket() ); break;
-               case OP_BUYSTOP   : result = OrderDelete( OrderTicket() ); break;
-               case OP_SELLLIMIT : result = OrderDelete( OrderTicket() ); break;
-               case OP_SELLSTOP  : result = OrderDelete( OrderTicket() ); break;
-               case OP_BUY       : result = OrderClose( OrderTicket(), OrderLots(), MarketInfo(OrderSymbol(), MODE_BID), 5, Red );  break;
-               case OP_SELL      : result = OrderClose( OrderTicket(), OrderLots(), MarketInfo(OrderSymbol(), MODE_ASK), 5, Red );  break;  
-            
-            
-            }  
+      if(( OrderSymbol()==Symbol()) && (OrderMagicNumber()==magico)) // si son las mias
+        {
 
-      }
-      if(result == false)
-      {
-      Print("cerrar_todo: Order " , OrderTicket() , " failed to close. Error:" , GetLastError() );
-      Sleep(3000);
-      }  
+//         // aca voy a tener que elejir las que sean de un canal determinado. No todas.
 
-}
-}
+         switch(type)
+           {
+            //Close pending orders
+            case OP_BUYLIMIT  : {result = OrderDelete( OrderTicket() ); break;}
+            case OP_BUYSTOP   : {result = OrderDelete( OrderTicket() ); break;}
+            case OP_SELLLIMIT : {result = OrderDelete( OrderTicket() ); break;}
+            case OP_SELLSTOP  : {result = OrderDelete( OrderTicket() ); break;}
+            case OP_BUY       : {result = OrderClose( OrderTicket(), OrderLots(), MarketInfo(OrderSymbol(), MODE_BID), 5, Red );  break;}
+            case OP_SELL      : {result = OrderClose( OrderTicket(), OrderLots(), MarketInfo(OrderSymbol(), MODE_ASK), 5, Red );  break;}
+
+
+           }
+//
+        }
+      if(result==false)
+        {
+         Print("cerrar_todo: Order ",OrderTicket()," failed to close. Error:",GetLastError());
+         Sleep(3000);
+        }
+
+     }
+  }
 // GESTION DE ORDENES: Cerrar todas las ordenes PENDIENTES
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 void Operaciones::cerrar_todo_pendiente(int &magico)
-{
-int total = OrdersTotal();
-bool result = true;
-  for(int i=total-1;i>=0;i--)
   {
-      int ordenselect=OrderSelect(i, SELECT_BY_POS);
-      int type    = OrderType();
+   int total=OrdersTotal();
+   bool result=true;
+   for(int i=total-1;i>=0;i--)
+     {
+      int ordenselect=OrderSelect(i,SELECT_BY_POS);
+      int type=OrderType();
 
+      if(( OrderSymbol()==Symbol()) && (OrderMagicNumber()==magico)) // si son las mias
+        {
 
-      if ( ( OrderSymbol()==Symbol()) && ( OrderMagicNumber() == magico) ) // si son las mias
-      {
+         // aca voy a tener que elejir las que sean de un canal determinado. No todas.
 
-            // aca voy a tener que elejir las que sean de un canal determinado. No todas.
+         switch(type)
+           {
+            //Close pending orders
+            case OP_BUYSTOP   : result = OrderDelete( OrderTicket() ); break;
+            case OP_SELLSTOP  : result = OrderDelete( OrderTicket() ); break;
+           }
 
-            switch(type)
-            {
-               //Close pending orders
-               case OP_BUYSTOP   : result = OrderDelete( OrderTicket() ); break;
-               case OP_SELLSTOP  : result = OrderDelete( OrderTicket() ); break;
-            }  
+        }
+      if(result==false)
+        {
+         Print("Cerrar_todo_pendiente: Order ",OrderTicket()," failed to close. Error:",GetLastError());
+         //Sleep(3000);
+        }
 
-      }
-      if(result == false)
-      {
-      Print("Cerrar_todo_pendiente: Order " , OrderTicket() , " failed to close. Error:" , GetLastError() );
-      //Sleep(3000);
-      }  
+     }
+  }
 
-}
-}
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-/*int Operaciones::armar_prox_paso(int &magico, double &Volumenn){
-
-
-      CanalActivo[0]++;       
-      int magicoo = magico;
-      magicoo ++;
-            
-      double Vo=Volumenn*MathPow(2,CanalActivo[0]);
-      
-      
-if (CanalActivoflag[0]==1){         // ARRIBA
-
-
-if ((CanalActivo[0]&1)==1){         // IMPAR
-   double buySL = arr_impar[0];     //SL
-   double buyPrice = arr_impar[1];  //B
-   double buyTP = arr_impar[2];     //TP
-Ticket=OrderOpenF(Symbol(),OP_BUYSTOP,(Vo) ,buyPrice ,10,buySL,buyTP,comentario,magicoo,0,Blue);
-buy_TP_actual=buyTP;
+void Operaciones::arma_matrix(Mg &_mg)
+  {
+arr_impar[0]=_mg.getNivelS1();
+arr_impar[1]=_mg.getNivelS2();
+arr_impar[2]=_mg.getNivelS3();
+arr_par[0]=_mg.getNivelS0();
+arr_par[1]=_mg.getNivelS1();
+arr_par[2]=_mg.getNivelS2();
+Print("-------------Matrix S  S0=",_mg.getNivelS0()," S1=",_mg.getNivelS1()," S2=",_mg.getNivelS2(), " S3=",_mg.getNivelS3());
+ab_impar[0]=_mg.getNivelI1();
+ab_impar[1]=_mg.getNivelI2();
+ab_impar[2]=_mg.getNivelI3();
+ab_par[0]=_mg.getNivelI0();
+ab_par[1]=_mg.getNivelI1();
+ab_par[2]=_mg.getNivelI2();
+Print("-------------Matrix S  I0=",_mg.getNivelI0()," I1=",_mg.getNivelI1()," I2=",_mg.getNivelI2(), " i3=",_mg.getNivelI3());
 }
 
-if ((CanalActivo[0]&1)==0){      // PAR
-double sellTP = arr_par[0];      //TP
-double sellPrice = arr_par[1];   //S
-double sellSL = arr_par[2];      //SL
-Ticket=OrderOpenF(Symbol(),OP_SELLSTOP,(Vo) ,sellPrice,10,sellSL,sellTP,comentario,magicoo,0,clrRed);
-sell_TP_actual=sellTP;
-}
-
-}
-
-
-if (CanalActivoflag[0]==-1){        // ABAJO
-
-if ((CanalActivo[0]&1)==1){      // IMPAR
-double sellSL = ab_impar[0];     //SL
-double sellPrice = ab_impar[1];  //S   
-double sellTP = ab_impar[2];     //TP
-Ticket=OrderOpenF(Symbol(),OP_SELLSTOP,(Vo) ,sellPrice,10,sellSL,sellTP,comentario,magicoo,0,clrRed);
-sell_TP_actual=sellTP;
-}
-
-if ((CanalActivo[0]&1)==0){      // PAR
-double buyTP = ab_par[0];        //TP
-double buyPrice = ab_par[1];     //B
-double buySL = ab_par[2];        //SL
-Ticket=OrderOpenF(Symbol(),OP_BUYSTOP,(Vo) ,buyPrice ,10,buySL,buyTP,comentario,magicoo,0,Blue);
-buy_TP_actual=buyTP;
-}
-
-
-
-}
-
-return (magicoo);
-}*/
-//+------------------------------------------------------------------+
-//|                                                                  |
-//+------------------------------------------------------------------+
-/*
-void Operaciones::armar_matrix(Mg &m){
-
-arr_impar[0]=m.getNivelS1();
-arr_impar[1]=m.getNivelS2();
-arr_impar[2]=m.getNivelS3();
-arr_par[0]=m.getNivelS0();
-arr_par[1]=m.getNivelS1();
-arr_par[2]=m.getNivelS2();
-
-ab_impar[0]=m.getNivelI1();
-ab_impar[1]=m.getNivelI2();
-ab_impar[2]=m.getNivelS3();
-ab_par[0]=m.getNivelI0();
-ab_par[1]=m.getNivelI1();
-ab_par[2]=m.getNivelI2();
-
-}*/
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+

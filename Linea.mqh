@@ -28,7 +28,7 @@ void LineCreate(string &nombre,double _ask,datetime tiempo,bool bandera );
 //+------------------------------------------------------------------+ 
 //| Move horizontal line                                             | 
 //+------------------------------------------------------------------+ 
-void HLineMove( string &name,double price);       
+static void HLineMove( string &name,double price);       
 void setColor(string &nombreLinea,color colorLinea);             
 };
 

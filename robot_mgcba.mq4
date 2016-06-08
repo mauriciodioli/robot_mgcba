@@ -15,6 +15,7 @@
 #include "Boton.mqh"
 #include "Linea.mqh"
 #include "Sonido.mqh" 
+#include "Orden.mqh"
 #include "Grilla.mqh"
 #include "Mg.mqh"
 ConfiguracionInicial configIni;
@@ -24,6 +25,7 @@ Operaciones operaciones;
 Linea ObjLinea;
 Sonido sonido;
 Grilla grilla;
+Orden orden;
 Mg mg1;
  
 //*********************************************************************
@@ -69,10 +71,10 @@ string linea2="linea2";
  Linea lineaH(linea1,clrBlue,Ask,TimeCurrent(),false);
  Linea lineaH2(linea2,clrGreen,Bid,TimeCurrent(),false);
 
-double equity,balance,_bid,_ask,_point ;
+double equity,balance;
 uint  barras_m1,barras_m5,barras_m15,barras_m30,barras_h1;
 static long opens;
-static int magicoini=MagicN,magicoactual;
+static int magicoini=MagicN;
 bool canal_roto=0;
 int CanalActivoflag[10];   // 10 flags de si un canal esta activo
 string come;
@@ -92,7 +94,7 @@ int OnInit()
    operaciones.operacionE(email);
     //se configura el timer con 1 o mas segundos
     EventSetTimer(1); 
-     
+     grilla.ArmarGrillaInicial(Dtot,dgrilla,vol,slippage, magicoini,mg1,operaciones);   
    return(INIT_SUCCEEDED);
    
   }
@@ -132,16 +134,28 @@ boton1.getAccion(ban);
 if (ban==1){
    Print("SE ACCIONO EL BOTON INICIO");
    sonido.setSonido(sonidoIinicio);
-   grilla.ArmarGrillaInicial(Dtot,dgrilla,vol,slippage, magicoini,mg1,operaciones);  
-  
+   grilla.ArmarGrillaInicial(Dtot,dgrilla,vol,slippage, magicoini,mg1,operaciones);                             
 }
 // Monitoreo del piso y techo del canal. (depues seran adaptativos)
-//controles.canalesPisoTecho(operaciones,canal_roto);
+controles.canalesPisoTecho(grilla);
+// Adapta la grilla
+controles.adaptarGrilla(orden, grilla);
 //   Limites alcanzados
-//controles.limitesAlcanzados(operaciones,canal_roto,vol);
-      //Print("Magico actual  ... ",magicoactual );
-  //   operaciones.setMagicoActual(o.armar_prox_paso(magicoactual,vol));//  esta incrementa CanalActivo[0] y magicoactual
-      //Print("Magico actual  ... ",magicoactual );
+controles.limitesAlcanzados(operaciones,grilla,mg1,vol);
+// itera Geometria
+controles.iteraGeometria(operaciones,grilla); 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -153,14 +167,15 @@ boton3.getAccion(ban);
 if(ban==1){
   sonido.setSonido(sonidoFin);
 }
+
 //---------------------Mueve lineas-------------------------------------------
 ObjLinea.HLineMove(linea1,Bid);
 ObjLinea.HLineMove(linea2,Ask);
 // ***************************************************************************
 //    VARIABLES bid ask
 // ===========================================================================
-   _bid     = NormalizeDouble(MarketInfo(Symbol(), MODE_BID), Digits); //define a lower price 
-   _ask     = NormalizeDouble(MarketInfo(Symbol(), MODE_ASK), Digits); //define an upper price
+  // _bid     = NormalizeDouble(MarketInfo(Symbol(), MODE_BID), Digits); //define a lower price 
+   //_ask     = NormalizeDouble(MarketInfo(Symbol(), MODE_ASK), Digits); //define an upper price
 
 
 // ***************************************************************************
@@ -183,7 +198,7 @@ barras_m1 = iBars(NULL,PERIOD_M1);
 
 }
 
-//controles.controlVelas(barras_m5,barras_m15,barras_m30,barras_h1);
+controles.controlVelas(grilla,barras_m5,barras_m15,barras_m30,barras_h1);
 
 
 
@@ -196,3 +211,5 @@ void OnTimer()
    Print("TIMEEEEERRR");
  
 }  
+
+  

@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                                      Limites.mqh |
+//|                                                        Canal.mqh |
 //|                        Copyright 2016, MetaQuotes Software Corp. |
 //|                                              http://www.mql4.com |
 //+------------------------------------------------------------------+
@@ -7,34 +7,31 @@
 #property link      "http://www.mql4.com"
 #property version   "1.00"
 #property strict
-//#include "Grilla.mqh"
-//#include "Operaciones.mqh"
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-class Limites
+class Canal
   {
 private:
-   double limiteInferior;
-   double limiteSuperior;
-   double limitMg;
+ double techo;
+ double piso;
+ int longitud;
+ int radio; 
+ double centroDcanal;
 public:
-                     Limites();
-                    ~Limites();
-                  //   
+                     Canal();
+                    ~Canal();
   };
-
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-Limites::Limites()
+Canal::Canal()
   {
   }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-Limites::~Limites()
+Canal::~Canal()
   {
   }
 //+------------------------------------------------------------------+
