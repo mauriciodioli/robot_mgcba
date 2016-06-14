@@ -27,10 +27,14 @@ public:
                      
                     ~Boton();
                     void getBoton();
-                    void setColor(string &nombre,color &colorBoton);
+                    string getNombreBoton();
+                    void delet(string nomb);
+                    void setColor(string nombre,color &colorBoton);
                     void getAccion(bool &bandera);
                     void setPosicion(int &valX,int &valY);
                     void setTam(int &tamX,int &TamY);
+                    void setDescripcion(string nom,string descrip);
+                    static void delet(int nbotones);  
                     
   };
 // ***************************************************************************
@@ -52,6 +56,12 @@ void Boton::getBoton(){
    ObjectSetInteger(0,nombreBoton,OBJPROP_STATE,false);
    ObjectSetInteger(0,nombreBoton,OBJPROP_FONTSIZE,16);
    ChartRedraw(0);  
+}
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void Boton::setDescripcion(string nom,string descrip){
+   ObjectSetString(0,nom,OBJPROP_TEXT,descrip);
 }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -79,8 +89,24 @@ void Boton::getAccion(bool &bandera){
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void Boton::setColor(string &nombre,color &colorBoton){
-ObjectSetInteger(0,nombreBoton,OBJPROP_BGCOLOR, colorBoton);
+void Boton::setColor(string nombre,color &colorBoton){
+ObjectSetInteger(0,nombre,OBJPROP_BGCOLOR, colorBoton);
+}
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string Boton::getNombreBoton(void){
+ return nombreBoton;
+}
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void Boton::delet(int nbotones){
+
+  for(int i=0;i<=nbotones;i++){
+     string nombre="Boton"+IntegerToString(i);
+     ObjectDelete(0,nombre);
+   }
 }
 
 //+------------------------------------------------------------------+

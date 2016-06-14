@@ -11,6 +11,8 @@
 #include "Grilla.mqh"
 #include "Mg.mqh"
 #include "Orden.mqh"
+#include "Boton.mqh"
+#include "Linea.mqh"
 #import "shell32.dll"
   int ShellExecuteW(int hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, int nShowCmd);
 #import
@@ -33,8 +35,9 @@ public:
                     void canalesPisoTecho(Grilla &_grilla1);
                     bool limitesAlcanzados(Operaciones &o,Grilla &_grilla2,Mg &_mg1,double &Vol);
                     void adaptarGrilla(Orden &orden, Grilla &_grilla3);
-                    void iteraGeometria(Operaciones &opg,Grilla &grilla4);
+                    void iteraGeometria(Operaciones &opg,Grilla &grilla4,bool &banderaIniciaDeNuevoo,bool &automaticoo,Boton &botonn1,string lineaa,Mg &m);
                     bool se_llego_al_TP(int magico);
+                    bool SiEstaCerrada(int ticket);
                     bool orden_abierta(int ticket);
                     bool detectar_si_entro_buy(int magico);
                     bool detectar_si_entro_sell(int magico);
@@ -52,17 +55,30 @@ public:
 //    OJOOOO SE DEBE DETECTAR SI ES QUE se violo el canal, pero tenemos dos ordenes en contra en vez de una.
 //    en ese caso se altera la martingala. 
 void Controles::canalesPisoTecho(Grilla &_grilla1){
-
-
+Print("llego la grilla ",_grilla1.getIdGrilla()," getCanal_techo() ",_grilla1.getCanal_techo()," getMagicoActual() ",_grilla1.getMagicoActual()," getCanalRoto() ",_grilla1.getCanalRoto()," getMagicoActual() ",_grilla1.getMagicoActual());
+   
   if ( _grilla1.CanalActivo[0]==1 ) {
+     // aca se llama a adaptargrilla();      
+    if ((Bid>_grilla1.getTechoCanal())||detectar_si_entro_buy(_grilla1.getMagicoActual()) ) {
+     _grilla1.setCanal_techo(1);
+    _grilla1.CanalActivoflag[0]=1;
     
-   // aca se llama a adaptargrilla();      
-    if ((Bid>_grilla1.getTechoCanal())||detectar_si_entro_buy(_grilla1.getMagicoActual()) ) {_grilla1.setCanal_techo(1);_grilla1.CanalActivoflag[0]=1;}
-    if ((Ask<_grilla1.getPisoCanal()) ||detectar_si_entro_sell(_grilla1.getMagicoActual())) {_grilla1.setCanal_piso(1);_grilla1.CanalActivoflag[0]=-1;}
+    }
+    if ((Ask<_grilla1.getPisoCanal()) ||detectar_si_entro_sell(_grilla1.getMagicoActual())) {
+    
+    _grilla1.setCanal_piso(1);
+    _grilla1.CanalActivoflag[0]=-1;
+    
+    }
    
     _grilla1.setCanalRoto(0);
     
-    if (_grilla1.getCanal_techo()||_grilla1.getCanal_piso())_grilla1.setCanalRoto(1);
+    if (_grilla1.getCanal_techo()||_grilla1.getCanal_piso()){
+       
+       _grilla1.setCanalRoto(1);
+       Print("_grilla1.getCanalRoto()------------------------------------------------------------------------------- ");
+       
+       }
     
     
    }//if (  CanalActivo[0]==1  )
@@ -113,56 +129,56 @@ if ( _grilla3.CanalActivo[0]==1 ){
    // 1 reviso las ordenes de la grilla de adentro hacia afuera
    if (nb<=Nbuys) nb++;if (ns<=Nsells) ns++;
    if (nb>_grilla3.getNBuyLimit()) nb=1;if (ns>_grilla3.getNSellLimit()) ns=1;
-     Print("La orden ordeneeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee BUY #TICKET ",_grilla3.ticketbuystop[nb],"  Esta abierta. Corresponde cerrar SELL #TICKET ", _grilla3.ticketsellstop[(Nsells-nb)]);
-//      
+     Print("La orden BUY #TICKET ",_grilla3.ticketbuystop[nb],"  Esta abierta. Corresponde cerrar SELL #TICKET ", _grilla3.ticketsellstop[(Nsells-nb)]);
+      
    
    
       if (orden_abierta(_grilla3.ticketbuystop[nb])){
          //listoBuys = 0;
-         Print("La orden ordeneeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee BUY #TICKET ",_grilla3.ticketbuystop[nb],"  Esta abierta. Corresponde cerrar SELL #TICKET ", _grilla3.ticketsellstop[(Nsells-nb)]);
-//         AbiertabuyTicket=ticketbuystop[nb];CerradasellTicket=ticketsellstop[(Nsells-nb)];
-//         
-//         // el TP de la orden ANTERIOR a la que tengo que cerrar es el nuevo PISO
-//         //double NuevoPiso = DameelPrecio(ticketsellstop[(Nsells-nb-1)]);
-//         NuevoPiso = DameelPrecio(ticketsellstop[(Nsells-nb)]);
-//         if( !SiEstaCerrada(ticketsellstop[(Nsells-nb)]) )
-//            {  if  (OrderDelete(ticketsellstop[(Nsells-nb)], clrAquamarine)   )
-//                   {
-//                     // tengo q poner el s2 en el lugar del SELL que acabo de cerrar
-//                     RecalculoReposicionamientoPiso(NuevoPiso);    // aca pasale el nuevo piso
-//                     //modificarS2(NuevoPiso);
-//                   }
-//                     else Print("error de OrderDelete458");
-//            }
-//         
-//         
-//         //NSellLimit = NSellLimit - 1;
-//         
+         Print("La orden BUY #TICKET ",_grilla3.ticketbuystop[nb],"  Esta abierta. Corresponde cerrar SELL #TICKET ", _grilla3.ticketsellstop[(Nsells-nb)]);
+         AbiertabuyTicket=ticketbuystop[nb];CerradasellTicket=ticketsellstop[(Nsells-nb)];
+         
+         // el TP de la orden ANTERIOR a la que tengo que cerrar es el nuevo PISO
+         //double NuevoPiso = DameelPrecio(ticketsellstop[(Nsells-nb-1)]);
+         NuevoPiso = DameelPrecio(ticketsellstop[(Nsells-nb)]);
+         if( !SiEstaCerrada(ticketsellstop[(Nsells-nb)]) )
+            {  if  (OrderDelete(ticketsellstop[(Nsells-nb)], clrAquamarine)   )
+                   {
+                     // tengo q poner el s2 en el lugar del SELL que acabo de cerrar
+                     RecalculoReposicionamientoPiso(NuevoPiso);    // aca pasale el nuevo piso
+                     //modificarS2(NuevoPiso);
+                   }
+                     else Print("error de OrderDelete458");
+            }
+         
+         
+         //NSellLimit = NSellLimit - 1;
+         
          }
-         //else{listoBuys = 1;}
+       //  else{listoBuys = 1;}
    
-//      if (orden_abierta(ticketsellstop[ns])){
-//         //listoSells = 0 ;
-//         //Print("La orden SELL#TICKET ",ticketsellstop[ns], "    esta abierta. Corresponde cerrar BUY #TICKET ", ticketbuystop[(Nbuys-ns)]);
-//         AbiertasellTicket=ticketsellstop[ns];CerradabuyTicket=ticketbuystop[(Nbuys-ns)];
-//         
-//         // el TP de la orden anterior a la que tengo que cerrar es el nuevo TECHO
-//         //double NuevoTecho = DameelPrecio(ticketbuystop[(Nbuys-ns-1)]);
-//         NuevoTecho = DameelPrecio(ticketbuystop[(Nbuys-ns)]);
-//         if( !SiEstaCerrada(ticketbuystop[(Nbuys-ns)]) )
-//            { if  (OrderDelete(ticketbuystop[(Nbuys-ns)], clrAquamarine)   )
-//                  {
-//                     // tengo q poner el B2 en el lugar del buy que acabo de cerrar
-//                     RecalculoReposicionamientoTecho(NuevoTecho);
-//                     //modificarB2(NuevoTecho);
-//                  }
-//                     else Print("error de OrderDelete471");      
-//            
-//            }
-//         //NBuyLimit = NBuyLimit - 1;
-//         
-//         }
-         //else{listoSells = 1;}
+      if (orden_abierta(ticketsellstop[ns])){
+         //listoSells = 0 ;
+         //Print("La orden SELL#TICKET ",ticketsellstop[ns], "    esta abierta. Corresponde cerrar BUY #TICKET ", ticketbuystop[(Nbuys-ns)]);
+         AbiertasellTicket=ticketsellstop[ns];CerradabuyTicket=ticketbuystop[(Nbuys-ns)];
+         
+         // el TP de la orden anterior a la que tengo que cerrar es el nuevo TECHO
+         //double NuevoTecho = DameelPrecio(ticketbuystop[(Nbuys-ns-1)]);
+         NuevoTecho = DameelPrecio(ticketbuystop[(Nbuys-ns)]);
+         if( !SiEstaCerrada(ticketbuystop[(Nbuys-ns)]) )
+            { if  (OrderDelete(ticketbuystop[(Nbuys-ns)], clrAquamarine)   )
+                  {
+                     // tengo q poner el B2 en el lugar del buy que acabo de cerrar
+                     RecalculoReposicionamientoTecho(NuevoTecho);
+                     //modificarB2(NuevoTecho);
+                  }
+                     else Print("error de OrderDelete471");      
+            
+            }
+         //NBuyLimit = NBuyLimit - 1;
+         
+         }
+       //  else{listoSells = 1;}
    
      //}while((listoBuys&&listoSells)!=1);
      
@@ -179,7 +195,7 @@ if ( _grilla3.CanalActivo[0]==1 ){
 bool Controles::limitesAlcanzados(Operaciones &o,Grilla &_grilla,Mg &_mg,double &Vol){
 
   if (_grilla.getCanalRoto()==1){  
-      Print( " -------------------------------------------- LIMITE DEL CANAL ALCANZADO");
+      Print( " -------------------------------------------- LIMITE DEL CANAL ALCANZADO",_grilla.getIdGrilla());
       
       int magico=_grilla.getMagicoActual()-1;
       int magicoactual=_grilla.getMagicoActual();
@@ -197,7 +213,7 @@ bool Controles::limitesAlcanzados(Operaciones &o,Grilla &_grilla,Mg &_mg,double 
      //Print("Magico  actual  ... ",magicoactual );
      magicoactual=_grilla.armar_prox_paso(o,_grilla,Vol);//  esta incrementa CanalActivo[0] y magicoactual
      _grilla.setMagicoActual(magicoactual);
-     //Print("Magico actual  ... ",magicoactual );
+      //Print("Magico actual  ... ",magicoactual );
          //Sleep(10000);
          
    }
@@ -207,12 +223,11 @@ bool Controles::limitesAlcanzados(Operaciones &o,Grilla &_grilla,Mg &_mg,double 
 //+------------------------------------------------------------------+
 //|                        iteraGeometria                            |
 //+------------------------------------------------------------------+
-void Controles::iteraGeometria(Operaciones &opg,Grilla &grilla4){
-
-
-   int magicoActual;
-   if (grilla4.CanalActivo[0]>1)   {        // aca comienza la iteracion de la geometria 
-   
+void Controles::iteraGeometria(Operaciones &opg,Grilla &grilla,bool &banderaIniciaDeNuevoo,bool &automaticoo,Boton &botonn1,string lineaa,Mg &m){
+     int magicoActual;
+  // Print("* aaaaaaaaattttttt.  ",grilla.CanalActivo[0]); 
+  
+   if (grilla.CanalActivo[0]>1)   {        // aca comienza la iteracion de la geometria 
   // Print( " -------------------------------------------- MG CANAL: ",grilla4.CanalActivo[0]);
    // Al entrar aca, esta vigente la B1 o la S1 y ya esta armado el paso 2
    //    Y el magico actual es el de la orden stop recien puesta
@@ -220,12 +235,12 @@ void Controles::iteraGeometria(Operaciones &opg,Grilla &grilla4){
    
    //Print("detectando si entro la orden STOP actual  ... ");
    
-   if (detectar_si_entro_buy(grilla4.getMagicoActual()) ||  detectar_si_entro_sell(grilla4.getMagicoActual()))
+   if (detectar_si_entro_buy(grilla.getMagicoActual()) ||  detectar_si_entro_sell(grilla.getMagicoActual()))
    {
    
       //Print("ALERT Entro nuevo nivel de MG. **************************************************"); 
-      magicoActual=grilla4.armar_prox_paso(opg,grilla4,vol);
-      grilla4.setMagicoActual(magicoActual);//  incrementa CanalActivo[0]
+      magicoActual=grilla.armar_prox_paso(opg,grilla,vol);
+      grilla.setMagicoActual(magicoActual);//  incrementa CanalActivo[0]
    
    }
    else
@@ -243,10 +258,10 @@ void Controles::iteraGeometria(Operaciones &opg,Grilla &grilla4){
       //Print("detectando si entro la orden STOP actual  ...    NO");
       //Print("Llego al TP ???                   actual  ...    ");
       
-      if (se_llego_al_TP(grilla4.getMagicoActual())){
-            magicoActual=grilla4.getMagicoActual();
+      if (se_llego_al_TP(grilla.getMagicoActual())){
+            magicoActual=grilla.getMagicoActual();
             opg.cerrar_todo_pendiente(magicoActual);
-            grilla4.CanalActivo[0]=0; // se apaga el robot. Listo para empezar de nuevo.
+            grilla.CanalActivo[0]=0; // se apaga el robot. Listo para empezar de nuevo.
             Print("***********************************************************");
             Print("* Llego al TP y al B=0 Listo para empezar de nuevo   ....  ");
             Print("***********************************************************");
@@ -260,7 +275,21 @@ void Controles::iteraGeometria(Operaciones &opg,Grilla &grilla4){
             Print("***********************************************************");
             Print("* Llego al TP y al B=0 Listo para empezar de nuevo   ....  ");
             Print("***********************************************************");
+           
             // automatizar
+           if(automaticoo){
+             banderaIniciaDeNuevoo=false;
+             Grilla grilla(2,mg1);
+             grilla.setPoint();
+             grilla.ArmarGrillaInicial(m,opg);
+             datetime timee=TimeCurrent();
+             ObjLinea.HLineMoveVertical(lineaa,time);
+          }else{
+            banderaIniciaDeNuevo=true;
+            botonn1.setDescripcion(botonn1.getNombreBoton(),"_INICIO_");
+            color colorBotonn1=clrGreen;
+            botonn1.setColor(botonn1.getNombreBoton(),colorBotonn1);
+          }
            
          }
          else
@@ -433,7 +462,7 @@ bool Controles::detectar_si_entro_buy(int magico)
 int total = OrdersTotal();
   for(int i=total-1;i>=0;i--)
   {
-   int ordenselect=OrderSelect(i, SELECT_BY_POS);
+   //int ordenselect=OrderSelect(i, SELECT_BY_POS);
    if ( ( OrderSymbol()==Symbol()) && ( OrderMagicNumber() == magico) )
    { // si son las mias
    if (OrderType()==OP_BUYSTOP) return(0);
@@ -443,6 +472,28 @@ int total = OrdersTotal();
 }
 return(0);
 }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+
+bool Controles::SiEstaCerrada(int ticket)
+{
+int tiiket = ticket;
+
+
+ if(OrderSelect(tiiket,SELECT_BY_TICKET,MODE_HISTORY))
+    {
+     datetime ctm=OrderCloseTime();    // SI ESTO NO ES CERO, LA orden ya fue cerrada.
+     if(ctm>0) return (1);
+     
+     //Print("SiEstaCerrada   ************************** ",ctm);
+     
+    }
+  else  Print("OrderSelect539 dio error _______ ",GetLastError());
+  
+return(0);
+}
+
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+

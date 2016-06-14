@@ -7,9 +7,17 @@
 #property link      "http://www.mql4.com"
 #property version   "1.00"
 #property strict
+//*********************************************************************
+//--------------------------Configuracion de parametros-----------
+//*********************************************************************
 extern string comentario="Flores-Strategy";   // Comentario
 extern int      MagicN=314159;
 extern double     gap=2;    //      gap: gap entre operaciones
+extern double   vol=0.1;  //       Volumen inicial
+extern double   dgrilla=2;    // (d) grilla inicial
+extern int      Dtot=50;    //    (D)  grilla inicial
+extern int      slippage=10;               // Deslizamiento maximo permitido.
+static int magicoini=MagicN;
 #include "Controles.mqh"
 #include "Operaciones.mqh"
 #include "Mg.mqh"
@@ -22,6 +30,9 @@ extern double     gap=2;    //      gap: gap entre operaciones
 class Grilla
   {
 private:
+ int idGrilla;
+ int magicoInicial;
+ Mg martGala;
  double _point;
  double _ask;
  double _bid;
@@ -46,11 +57,14 @@ public:
 public:
                      Grilla();
                     ~Grilla();
+                    Grilla(int idgrilla,Mg &m);
                     //la declaracion de los objetos siempre tienen que tener distinto nombre que en la declaracion en la cabecera
-                    void ArmarGrillaInicial(int &D, double &d, double &Vo, int&slippagee,int &magico,Mg &m,Operaciones &ope);
-                    int armar_prox_paso(Operaciones &op,Grilla &grilla,double &Volumenn);
-                    void setMagicoActual(int &magicoActual);
-                    int getMagicoActual();                    
+                    void   ArmarGrillaInicial(Mg &m,Operaciones &ope);
+                    int    armar_prox_paso(Operaciones &op,Grilla &grilla,double &Volumenn);
+                    void   setIdGrilla(int idgrilla);
+                    int    getIdGrilla();
+                    void   setMagicoActual(int &magicoActual);
+                    int    getMagicoActual();                    
                     double getTechoCanal();
                     double getPisoCanal();
                     void   setCanal_techo(bool canaltecho);
@@ -74,6 +88,12 @@ public:
                     int    getNSellLimit();
                     
   };
+void Grilla::setIdGrilla(int idgrilla){
+   idGrilla=idgrilla;   
+}
+int Grilla::getIdGrilla(void){
+ return idGrilla;
+}
 void  Grilla::setNordenes(int &norden){
   Nordenes=norden;
  }
@@ -162,11 +182,11 @@ void Grilla::setPoint()
 //       Los limites los hace con magico+1. 
 //       DEVUELVE: el magico actual, y el valor en CanalActivo[n]=1
 
-void Grilla::ArmarGrillaInicial(int &D, double &d, double &Vol_in, int &slippagee, int &magico,Mg &mg,Operaciones &ope) // H,d,Vo
+void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope) // H,d,Vo
 {
 
    nivel=0; nivelpip=0;
-   Nordenes = (int) ( D /  (d+gap)  ) ;
+   Nordenes = (int) ( Dtot /  (dgrilla+gap)  ) ;
    NBuyLimit = Nordenes/2 ;
    NSellLimit = Nordenes/2 ;  
    string symbol=Symbol();int OO_cmd=OP_BUY;color OO_arrow_color=Blue;
@@ -176,18 +196,19 @@ void Grilla::ArmarGrillaInicial(int &D, double &d, double &Vol_in, int &slippage
    //ArrayResize(ticketbuystop,NBuyLimit+10);
    //ArrayResize(ticketsellstop,NSellLimit+10);
 
-   double Vo = 0.5*Vol_in;
+   double Vo = 0.5*vol;
    
-   Print("Grilla INI:   D: ",D,"  d: ",d,"  gap: ",gap,"  Nordenes:  ",Nordenes,"  NBuy_Stop:  ",NBuyLimit,"  NSell_Stop:  ",NSellLimit);
+   Print("Grilla INI:   D: ",Dtot,"  d: ",dgrilla,"  gap: ",gap,"  Nordenes:  ",Nordenes,"  NBuy_Stop:  ",NBuyLimit,"  NSell_Stop:  ",NSellLimit);
   
  
    // ***** 1ro la BUY market
    double buyPrice = NormalizeDouble(Ask , Digits);
    mg.setNivelS0(buyPrice);
-   double buyTP    = NormalizeDouble(Ask + 10 * d *_point  ,Digits);
+   double buyTP    = NormalizeDouble(Ask + 10 * dgrilla *_point  ,Digits);
    double buySL    = 0;
    symbol=Symbol();OO_cmd=OP_BUY;OO_arrow_color=Blue;
-   ticketbuystop[0]=ope.OrderOpenF(symbol,OO_cmd,Vo ,buyPrice ,slippagee,buySL,buyTP,comentario,magico,_ExpDate,OO_arrow_color);
+   Print("magicoIniciaffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffl ",magicoInicial);
+   ticketbuystop[0]=ope.OrderOpenF(symbol,OO_cmd,Vo ,buyPrice ,slippage,buySL,buyTP,comentario,magicoInicial,_ExpDate,OO_arrow_color);
   
    _ask=Ask;
    
@@ -195,22 +216,22 @@ void Grilla::ArmarGrillaInicial(int &D, double &d, double &Vol_in, int &slippage
   for (nivel=1; nivel<=NBuyLimit ; nivel++ ) // colocamos las Buy Stop
    {
      //double nivelpip = nivel*d;
-      nivelpip = nivel*(gap+d);
+      nivelpip = nivel*(gap+dgrilla);
        
       //Orden orden(nivel);Print("orden ",orden.getIdOrden());
       buyPrice = NormalizeDouble(_ask + 10*nivelpip*_point      ,Digits);
-      buyTP    = NormalizeDouble(_ask + 10*(nivelpip+d)*_point  ,Digits);
+      buyTP    = NormalizeDouble(_ask + 10*(nivelpip+dgrilla)*_point  ,Digits);
       buySL=0;
       
       //Print(" nivel :",   nivel," BUY nivelpip :",   nivelpip, "  BUY Price ",buyPrice ,"  BUY TP    ",buyTP    );
       
       symbol=Symbol();OO_cmd=OP_BUYSTOP;OO_arrow_color=clrWhite;
-      ticketbuystop[nivel]=ope.OrderOpenF(symbol,OO_cmd,Vo ,buyPrice ,slippagee,buySL,buyTP,comentario,magico,_ExpDate,OO_arrow_color);
+      ticketbuystop[nivel]=ope.OrderOpenF(symbol,OO_cmd,Vo ,buyPrice ,slippage,buySL,buyTP,comentario,magicoInicial,_ExpDate,OO_arrow_color);
   
       //if (nivel==NBuyLimit){TechoCanal = buyTP;TechoCanalp=(nivelpip+d);Print(" TechoCanal:",TechoCanal); }
        if (nivel==NBuyLimit)
-         {     TechoCanal = NormalizeDouble(_ask + 10*(nivelpip+d+gap)*_point  ,Digits);
-               TechoCanalp=(nivelpip+d+gap);Print(" TechoCanal:",TechoCanal); 
+         {     TechoCanal = NormalizeDouble(_ask + 10*(nivelpip+dgrilla+gap)*_point  ,Digits);
+               TechoCanalp=(nivelpip+dgrilla+gap);Print(" TechoCanal:",TechoCanal); 
          }
    }
 
@@ -218,8 +239,8 @@ void Grilla::ArmarGrillaInicial(int &D, double &d, double &Vol_in, int &slippage
    buyPrice = TechoCanal ;       // 2Vo
    buyTP    = NormalizeDouble(_ask + (10*1.5*TechoCanalp)*_point    ,Digits);
    buySL    = NormalizeDouble(_ask + (10*0.5*TechoCanalp)*_point    ,Digits);
-   symbol=Symbol();OO_cmd=OP_BUYSTOP;OO_arrow_color=Blue;double Vo1=(2*Vol_in);int magico1=(magico+1);
-   ticketbuystop[nivel]=ope.OrderOpenF (symbol ,OO_cmd     ,Vo1 ,buyPrice ,slippagee,buySL,buyTP,comentario,magico1,_ExpDate,OO_arrow_color);
+   symbol=Symbol();OO_cmd=OP_BUYSTOP;OO_arrow_color=Blue;double Vo1=(2*vol);int magico1=(magicoInicial+1);
+   ticketbuystop[nivel]=ope.OrderOpenF (symbol ,OO_cmd     ,Vo1 ,buyPrice ,slippage,buySL,buyTP,comentario,magico1,_ExpDate,OO_arrow_color);
    mg.setNivelS1(buySL);
    mg.setNivelS2(buyPrice);
    mg.setNivelS3(buyTP);  
@@ -229,25 +250,25 @@ void Grilla::ArmarGrillaInicial(int &D, double &d, double &Vol_in, int &slippage
    // ***** 1ro la SELL market
    double sellPrice = NormalizeDouble(Bid , Digits);
    mg.setNivelI0(sellPrice);
-   double sellTP    = NormalizeDouble(Bid - 10 * d *_point  ,Digits);
+   double sellTP    = NormalizeDouble(Bid - 10 * dgrilla *_point  ,Digits);
    double sellSL    = 0;
    symbol=Symbol();OO_cmd=OP_SELL;OO_arrow_color=clrRed;
-   ticketbuystop[0]=ope.OrderOpenF(symbol,OO_cmd,Vo ,sellPrice ,slippagee,sellSL,sellTP,comentario,magico,_ExpDate,OO_arrow_color);
+   ticketbuystop[0]=ope.OrderOpenF(symbol,OO_cmd,Vo ,sellPrice ,slippage,sellSL,sellTP,comentario,magicoInicial,_ExpDate,OO_arrow_color);
    
    _bid=Bid;
    // ***** 2do bucle de las SELL stop
    for (nivel=1; nivel<=NSellLimit ; nivel++ )// colocamos las sell Stop
    {
     
-    nivelpip =nivel*(gap+d);
+    nivelpip =nivel*(gap+dgrilla);
    
     sellPrice  = NormalizeDouble( _bid - 10*nivelpip*_point      ,Digits);
-    sellTP     = NormalizeDouble( _bid - 10*(nivelpip+d)*_point  ,Digits);
+    sellTP     = NormalizeDouble( _bid - 10*(nivelpip+dgrilla)*_point  ,Digits);
     symbol=Symbol();OO_cmd=OP_SELLSTOP;OO_arrow_color=clrRed;
-    ticketbuystop[nivel]=ope.OrderOpenF(symbol,OO_cmd,Vo ,sellPrice ,slippagee,sellSL,sellTP,comentario,magico,_ExpDate,OO_arrow_color);
+    ticketbuystop[nivel]=ope.OrderOpenF(symbol,OO_cmd,Vo ,sellPrice ,slippage,sellSL,sellTP,comentario,magicoInicial,_ExpDate,OO_arrow_color);
      if (nivel==NSellLimit)
-      {     pisoCanal= NormalizeDouble( _bid - 10*(nivelpip+d+gap)*_point  ,Digits);
-            pisoCanalp=(nivelpip+d+gap);Print(" PisoCanal:",pisoCanal);       
+      {     pisoCanal= NormalizeDouble( _bid - 10*(nivelpip+dgrilla+gap)*_point  ,Digits);
+            pisoCanalp=(nivelpip+dgrilla+gap);Print(" PisoCanal:",pisoCanal);       
       }
    }
   
@@ -255,14 +276,14 @@ void Grilla::ArmarGrillaInicial(int &D, double &d, double &Vol_in, int &slippage
    sellTP    = NormalizeDouble(_bid - (10*1.5*pisoCanalp)*_point    ,Digits);
    sellSL    = NormalizeDouble(_bid - (10*0.5*pisoCanalp)*_point    ,Digits);
    //MagicN=31415901;
-   symbol=Symbol();OO_cmd=OP_SELLSTOP;OO_arrow_color=clrRed;Vo1=(2*Vol_in); magico1=(magico+1);
-   ticketbuystop[nivel]=ope.OrderOpenF(symbol,OO_cmd,Vo1 ,sellPrice ,slippagee,sellSL,sellTP,comentario,magico1,_ExpDate,OO_arrow_color);
+   symbol=Symbol();OO_cmd=OP_SELLSTOP;OO_arrow_color=clrRed;Vo1=(2*vol); magico1=(magicoInicial+1);
+   ticketbuystop[nivel]=ope.OrderOpenF(symbol,OO_cmd,Vo1 ,sellPrice ,slippage,sellSL,sellTP,comentario,magico1,_ExpDate,OO_arrow_color);
    mg.setNivelI1(sellSL);
    mg.setNivelI2(sellPrice);
    mg.setNivelI3(sellTP);  
    
 
-   magicoactual=magico+1;
+   magicoactual=magicoInicial+1;
 }
 //+------------------------------------------------------------------+
 //|                                                                  |
@@ -336,6 +357,13 @@ orden.setBuy_TP_actual(buyTP);
 }
 
 return (magicoo);
+}
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void Grilla::Grilla(int idgrilla,Mg &m){
+ idGrilla=idgrilla;
+ 
 }
 //+------------------------------------------------------------------+
 //|                                                                  |

@@ -47,6 +47,7 @@ public:
    void operacionApertura(double &point);
    void cerrar_todo(int &magico);
    void cerrar_todo_pendiente(int &magico);
+   void Operaciones::cerrar_Ordenes();
    void operacionE(string &mail);
    void arma_matrix(Mg &_mg);
    
@@ -363,6 +364,49 @@ void Operaciones::operacionE(string &mail)
                   "; Retorno de la inversion: "+DoubleToString(SignalBaseGetDouble(SIGNAL_BASE_ROI));
    Shell(mail,mensaje);
   }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+// GESTION DE ORDENES: Cerrar todas las ordenes activas 
+void Operaciones::cerrar_Ordenes()
+{
+
+int total = OrdersTotal();
+bool result = true;
+  for(int i=total-1;i>=0;i--)
+  {
+
+      int ordenselect=OrderSelect(i, SELECT_BY_POS);
+      int type    = OrderType();
+      
+      
+      if ( ( OrderSymbol()==Symbol())&& OrderComment()==comentario ) // si son las mias
+      {
+
+            // aca voy a tener que elejir las que sean de un canal determinado. No todas.
+
+            switch(type)
+            {
+               //Close pending orders
+               case OP_BUYLIMIT  : result = OrderDelete( OrderTicket() ); break;
+               case OP_BUYSTOP   : result = OrderDelete( OrderTicket() ); break;
+               case OP_SELLLIMIT : result = OrderDelete( OrderTicket() ); break;
+               case OP_SELLSTOP  : result = OrderDelete( OrderTicket() ); break;
+               case OP_BUY       : result = OrderClose( OrderTicket(), OrderLots(), MarketInfo(OrderSymbol(), MODE_BID), 5, Red );  break;
+               case OP_SELL      : result = OrderClose( OrderTicket(), OrderLots(), MarketInfo(OrderSymbol(), MODE_ASK), 5, Red );  break;  
+            
+            
+            }  
+
+      }
+      if(result == false)
+      {
+      Print("cerrar_todo: Order " , OrderTicket() , " failed to close. Error:" , GetLastError() );
+      Sleep(3000);
+      }  
+
+}
+}
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+

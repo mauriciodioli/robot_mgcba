@@ -28,8 +28,13 @@ void LineCreate(string &nombre,double _ask,datetime tiempo,bool bandera );
 //+------------------------------------------------------------------+ 
 //| Move horizontal line                                             | 
 //+------------------------------------------------------------------+ 
-static void HLineMove( string &name,double price);       
-void setColor(string &nombreLinea,color colorLinea);             
+static void HLineMove( string &name,double price);  
+//+------------------------------------------------------------------+ 
+//| Move horizontal line                                             | 
+//+------------------------------------------------------------------+ 
+static void HLineMoveVertical( string &name,datetime time1);     
+void setColor(string &nombreLinea,color colorLinea);   
+static void delet(int nlineas);          
 };
 
 //+------------------------------------------------------------------+
@@ -62,7 +67,22 @@ void Linea::LineCreate(string &nombre,double _ask1,datetime tiempo,bool bandera 
    ObjectSetInteger(0,name,OBJPROP_ZORDER,0);
    //--- successful execution
   }
-
+//+------------------------------------------------------------------+ 
+//| Move vertical line                                               | 
+//+------------------------------------------------------------------+ 
+void Linea::HLineMoveVertical( string &name,datetime time1)      // line price 
+  { 
+  int chart_ID=0;
+//--- if the line price is not set, move it to the current Bid price level 
+   if(!time1) 
+      //time1=SymbolInfoDouble(Symbol(),SYMBOL_BID); 
+//--- reset the error value 
+   ResetLastError(); 
+//--- move a horizontal line 
+   if(!ObjectMove(0,name,0,time1,0)){Print(__FUNCTION__, ": failed to move the horizontal line! Error code = ",GetLastError());} 
+//--- successful execution 
+  
+  }
 //+------------------------------------------------------------------+ 
 //| Move horizontal line                                             | 
 //+------------------------------------------------------------------+ 
@@ -94,6 +114,16 @@ Linea::Linea(string &nombre,color idcolor,double _ask1,datetime tiempo,bool band
    LineCreate(nombre,_ask1,tiempo,bandera);
   
   }
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void Linea::delet(int nLineas){
+
+  for(int i=0;i<=nLineas;i++){
+     string nombre="linea"+IntegerToString(i);
+     ObjectDelete(0,nombre);
+   }
+}
 
  Linea::Linea(){}
 //+------------------------------------------------------------------+
