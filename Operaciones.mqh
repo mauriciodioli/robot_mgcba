@@ -461,10 +461,10 @@ void Operaciones::cerrar_todo_pendiente(int &magico)
      {
       int ordenselect=OrderSelect(i,SELECT_BY_POS);
       int type=OrderType();
-
+ Print("cerrar_todo_pendiente magico ",magico,"= OrderMagicNumber() ",OrderMagicNumber());
       if(( OrderSymbol()==Symbol()) && (OrderMagicNumber()==magico)) // si son las mias
         {
-
+         
          // aca voy a tener que elejir las que sean de un canal determinado. No todas.
 
          switch(type)
@@ -495,14 +495,14 @@ arr_impar[2]=_mg.getNivelS3();
 arr_par[0]=_mg.getNivelS0();
 arr_par[1]=_mg.getNivelS1();
 arr_par[2]=_mg.getNivelS2();
-Print("-------------Matrix S  S0=",_mg.getNivelS0()," S1=",_mg.getNivelS1()," S2=",_mg.getNivelS2(), " S3=",_mg.getNivelS3());
+//Print("-------------Matrix S  S0=",_mg.getNivelS0()," S1=",_mg.getNivelS1()," S2=",_mg.getNivelS2(), " S3=",_mg.getNivelS3());
 ab_impar[0]=_mg.getNivelI1();
 ab_impar[1]=_mg.getNivelI2();
 ab_impar[2]=_mg.getNivelI3();
 ab_par[0]=_mg.getNivelI0();
 ab_par[1]=_mg.getNivelI1();
 ab_par[2]=_mg.getNivelI2();
-Print("-------------Matrix S  I0=",_mg.getNivelI0()," I1=",_mg.getNivelI1()," I2=",_mg.getNivelI2(), " i3=",_mg.getNivelI3());
+//Print("-------------Matrix S  I0=",_mg.getNivelI0()," I1=",_mg.getNivelI1()," I2=",_mg.getNivelI2(), " i3=",_mg.getNivelI3());
 }
 
 //+------------------------------------------------------------------+

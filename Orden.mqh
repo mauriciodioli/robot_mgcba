@@ -14,6 +14,7 @@ class Orden
   {
 private:
  int idOrden;
+ int idGrilla;
  datetime tiempo;
  string tipo;
  double volumen;
@@ -26,6 +27,7 @@ private:
  double buy_TP_actual;
  double sell_TP_actual;
  bool techo;
+ bool estado;
  int AbiertabuyTicket;
  int CerradabuyTicket;
  int AbiertasellTicket;
@@ -36,27 +38,48 @@ public:
                      Orden();
                      Orden(int ordenid);
                     ~Orden();
-                    int getIdOrden();
-                    void setTicket(uint &ticket);
-                    uint getTicket();
-                    void setBuy_TP_actual(double &buyTpActual);
+                    void   setIdOrden(int idorden);
+                    int    getIdOrden();
+                    void   setTicket(uint &ticket);
+                    uint   getTicket();
+                    void   setBuy_TP_actual(double &buyTpActual);
                     double getBuy_TP_actual();
-                    void setSell_TP_actual(double &sellTpActual);
+                    void   setSell_TP_actual(double &sellTpActual);
                     double getSell_TP_actual();
-                    void setAbiertabuyTicket(int &abiertabuy);
-                    int  getAbiertabuyTicket();
-                    void setCerradabuyTicket(int &cerradabuy);
-                    int  getCerradabuyTicket();
-                    void setAbiertasellTicket(int &abiertasell);
-                    int  getAbiertasellTicket();
-                    void setCerradasellTicket(int &cerradasell);
-                    int  getCerradasellTicket();
+                    void   setAbiertabuyTicket(int &abiertabuy);
+                    int    getAbiertabuyTicket();
+                    void   setCerradabuyTicket(int &cerradabuy);
+                    int    getCerradabuyTicket();
+                    void   setAbiertasellTicket(int &abiertasell);
+                    int    getAbiertasellTicket();
+                    void   setCerradasellTicket(int &cerradasell);
+                    int    getCerradasellTicket();
+                    void   setEstadoOrden(bool estadoOrden);
+                    bool   getEstadoOrden();
+                    void   setIdGrilla(int idgrilla);
+                    int    getIdGrilla();
+                    void   setOrden(Orden* &vectorOrden[],int indice,int idOrden,int IdGrilla,bool estadoOrden);
   };
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+void Orden::setEstadoOrden(bool estadoOrden){
+ estado=estadoOrden;
+}
+bool Orden::getEstadoOrden(){
+ return estado;
+}
+void Orden::setIdOrden(int idorden){
+ idOrden=idorden;
+}
 int Orden::getIdOrden(void){
  return idOrden;
+}
+void Orden::setIdGrilla(int idgrilla){
+   idGrilla=idgrilla;   
+}
+int Orden::getIdGrilla(void){
+ return idGrilla;
 }
  void Orden::setTicket(uint &ticket){
   Ticket=ticket;
@@ -100,7 +123,17 @@ void Orden::setCerradasellTicket(int &cerradasell){
 int  Orden::getCerradasellTicket(){
  return CerradasellTicket;
 }
- //+------------------------------------------------------------------+
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+
+ void Orden::setOrden(Orden* &vectorOrden[],int indice,int idOrden,int IdGrilla,bool estadoOrden){
+  vectorOrden[indice].setIdOrden(idOrden);
+  vectorOrden[indice].setIdGrilla(idGrilla);
+  vectorOrden[indice].setEstadoOrden(estadoOrden);
+ }
+  
+//+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
 Orden::Orden(int ordenid)

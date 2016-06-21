@@ -24,9 +24,11 @@ Controles controles;
 Operaciones operaciones;
 Linea ObjLinea;
 Sonido sonido;
-Orden orden;
 Mg mg1;
-Grilla vector[];
+Grilla *vector[];
+Grilla grilla;
+Orden  *vectorOrden[];
+Orden orden;
 //extern double   vol=0.1;  //       Volumen inicial
 //extern double   dgrilla=2;    // (d) grilla inicial
 //extern int      Dtot=50;    //    (D)  grilla inicial
@@ -49,7 +51,7 @@ string descripcion="_INICIO_";
 color colorBoton1=clrGreen;
 
 string Boton2="Boton2";
-string descripcion2="_APAGADO_";
+string descripcion2="_RECET_";
 color colorBoton2=clrRed;
 
 string Boton3="Boton3";
@@ -81,14 +83,14 @@ int numeroLienas=2;
 double equity,balance;
 uint  barras_m1,barras_m5,barras_m15,barras_m30,barras_h1;
 static long opens;
-bool banderaIniciaDeNuevo=false,automatico=false;
+bool banderaIniciaDeNuevo=true,automatico=false,banderaEliminaObjetoVector=false;
 int CanalActivoflag[10],contadorGrilla=0;   // 10 flags de si un canal esta activo
 string come;
 string email="madioli26@hotmail.com";
 
  //datetime time=D'2014.03.05 15:46:58';
 //+------------------------------------------------------------------+
-//| Expert initialization function                                   |
+//| Expert initialization function               |||||||||||||||||||||
 //+------------------------------------------------------------------+
 int OnInit()
   {
@@ -97,7 +99,13 @@ int OnInit()
    int x=10;   int y=100;
    boton1.setPosicion(x,y); 
    operaciones.operacionE(email);
-   ArrayResize(vector,1000);
+   ArrayResize(vector,10000);
+   ArrayResize(vectorOrden,10000); 
+   for(int t=0;t<2;t++){   
+   grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
+    //grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
+    Print("inicia grilla N°",vector[t].getIdGrilla());
+    }
    //se configura el timer con 1 o mas segundos
    EventSetTimer(1);
   
@@ -143,12 +151,17 @@ if (ban==1){
 //       DEVUELVE: el magico actual, y el valor en CanalActivo[n]=1
   Print("SE ACCIONO EL BOTON INICIO");
   if(banderaIniciaDeNuevo){
-    boton1.setDescripcion(Boton2,"_APAGADO_");
-    banderaIniciaDeNuevo=false;
+    boton1.setDescripcion(Boton2,"_RECET_");
+    banderaIniciaDeNuevo=true;
     colorBoton1=clrLightSlateGray;
     boton1.setColor(Boton1,colorBoton1);
     boton1.setDescripcion(Boton1,":)");
-    sonido.setSonido(sonidoIinicio);    
+    sonido.setSonido(sonidoIinicio);
+    for(int t=0;t<2;t++){   
+    //grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
+    grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
+    Print("inicia grilla N°",vector[t].getIdGrilla());
+    }
     time=TimeCurrent();
     numeroLienas++;
     string nom="linea"+IntegerToString(numeroLienas);
@@ -159,17 +172,19 @@ if (ban==1){
 
 boton2.getAccion(ban);
 if(ban==1){
- boton2.setDescripcion(Boton2,":(");
+banderaEliminaObjetoVector=true;
+ boton2.setDescripcion(Boton2,"-->");
  operaciones.cerrar_Ordenes();
  banderaIniciaDeNuevo=true;
  boton1.setDescripcion(Boton1,"_INICIO_");
  colorBoton1=clrGreen;
  boton1.setColor(Boton1,colorBoton1);
+ //ArrayFree(vector);ArrayResize(vector,1000); 
 }
 
 boton3.getAccion(ban);
 if(ban==1){
-   //sonido.setSonido(sonidoIinicio);
+   sonido.setSonido(sonidoIinicio);
   if(automatico){
       automatico=false;
       boton3.setDescripcion(Boton3,"_AUTO_");
@@ -187,36 +202,29 @@ if(ban==1){
 boton4.getAccion(ban);
 if(ban==1){
  Print("SE ACCIONO EL BOTON I/O");
-  vector[contadorGrilla].setIdGrilla(contadorGrilla);
-  vector[contadorGrilla].setPoint();
-  vector[contadorGrilla].ArmarGrillaInicial(mg1,operaciones);
-  contadorGrilla++;
+  //grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
+  grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
+  time=TimeCurrent();
+  numeroLienas++;
+  string nom="linea"+IntegerToString(numeroLienas);
+  Linea line(nom,clrYellow,Ask,time,true);
 }
-//---------------------Mueve lineas-------------------------------------------
-ObjLinea.HLineMove(linea1,Bid);
-ObjLinea.HLineMove(linea2,Ask);
+
 //----------------------------------------------------------------------------
 for(int i=0;i<contadorGrilla;i++){
+//---------------------Mueve lineas-------------------------------------------
+
+ObjLinea.HLineMove(linea1,vector[i].getTechoCanal());
+ObjLinea.HLineMove(linea2,vector[i].getPisoCanal());
+//Print(i," posicion del vector contadorGrilla ",contadorGrilla," vector[contadorGrilla].setIdGrilla ",vector[i].getIdGrilla());
  // Monitoreo del piso y techo del canal. (depues seran adaptativos)
-   controles.canalesPisoTecho(vector[i]);
+  controles.canalesPisoTecho(vector[i]);
 // Adapta la grilla
-   controles.adaptarGrilla(orden,vector[0]);
+  controles.adaptarGrilla(orden,vector[i],mg1);
 // Limites alcanzados
-   controles.limitesAlcanzados(operaciones,vector[0],mg1,vol);
+  controles.limitesAlcanzados(operaciones,vector[i],mg1,vector,contadorGrilla);
 // itera Geometria
-   controles.iteraGeometria(operaciones,vector[0],banderaIniciaDeNuevo,automatico,boton1,linea0,mg1); 
-
-}
-
-
-
-
-
-
-
-
-
-
+  controles.iteraGeometria(operaciones,vector[i],i,vector,vectorOrden,contadorGrilla,banderaIniciaDeNuevo,automatico,boton1,linea0,mg1,banderaEliminaObjetoVector); 
 
 
 // ***************************************************************************
@@ -242,16 +250,24 @@ if( (iBars(NULL,PERIOD_M1)>2) && (barras_m1!=iBars(NULL,PERIOD_M1))   ){       /
 barras_m1 = iBars(NULL,PERIOD_M1);
 //Print("M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1");
 
-//controles.resumenOrdenes(balance);
+//controles.resumenOrdenes(balance,vector[i].getMagicoActual());
 
 }
-for(int i=0;i<contadorGrilla;i++)
-controles.controlVelas(vector[i],barras_m5,barras_m15,barras_m30,barras_h1);
+}
+for(int i=0;i<OrdersTotal();i++){
+ //Print(" orden grill ",vectorOrden[i].getIdGrilla()," id orden ",vectorOrden[i].getIdOrden()," stado orden ",vectorOrden[i].getEstadoOrden());
+}
 
-
-    
-
+for(int j=0;j<contadorGrilla;j++){
+//elimina objeto
+   controles.deleteGrilla(banderaEliminaObjetoVector,contadorGrilla,j,vector);
+   controles.controlVelas(vector[j],barras_m5,barras_m15,barras_m30,barras_h1);
   }
+}
+//for(int j=0;j<contadorGrilla;j++){
+// Print(j," posicion del vector mestra vector  contadorGrilla ",contadorGrilla," vector[contadorGrilla].setIdGrilla ",vector[j].getIdGrilla());
+//
+// }
 //+------------------------------------------------------------------+
 void OnTimer()
 {
