@@ -63,8 +63,8 @@ public:
                     ~Grilla();
                     Grilla(int idgrilla,Mg &m);
                     //la declaracion de los objetos siempre tienen que tener distinto nombre que en la declaracion en la cabecera
-                    //void   ArmarGrillaInicial(Mg &m,Operaciones &ope,Orden* &vectorOrden[]);
-                    void   ArmarGrillaInicial(Mg &m,Operaciones &ope);
+                    void   ArmarGrillaInicial(Mg &m,Operaciones &ope,Orden* &vectorOrden[]);
+                    //void   ArmarGrillaInicial(Mg &m,Operaciones &ope);
                     int    armar_prox_paso(Operaciones &op,Grilla &grilla);
                     void   setIdGrilla(int idgrilla);
                     int    getIdGrilla();
@@ -101,8 +101,8 @@ public:
                     int    getTicketS2();
                     void   setEstadoGrilla(bool estadoGrilla);
                     bool   getEstadoGrilla();
-                    //void lanzaGrilla(Grilla* &vector[],Orden* &vectorOrden[],int &contador,Mg &mg,Operaciones &op);
-                    void lanzaGrilla(Grilla* &vector[],int &contador,Mg &mg,Operaciones &op);
+                    void lanzaGrilla(Grilla* &vector[],Orden* &vectorOrden[],int &contador,Mg &mg,Operaciones &op);
+                    //void lanzaGrilla(Grilla* &vector[],int &contador,Mg &mg,Operaciones &op);
                     
   };
 void   Grilla::setEstadoGrilla(bool estadoGrilla){
@@ -229,8 +229,8 @@ void Grilla::setPoint()
  //       H,d,Vo,desliz, magicoinicial. 
 //       Los limites los hace con magico+1. 
 //       DEVUELVE: el magico actual, y el valor en CanalActivo[n]=1
-//void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope,Orden* &vectorOrden[]) // H,d,Vo
-void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope) // H,d,Vo
+void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope,Orden* &vectorOrden[]) // H,d,Vo
+//void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope) // H,d,Vo
 {
    
    idGrilla=magicoini =magicoini+idGrilla;
@@ -257,7 +257,7 @@ void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope) // H,d,Vo
    double buySL    = 0;
    symbol=Symbol();OO_cmd=OP_BUY;OO_arrow_color=Blue;
    ticketbuystop[0]=ope.OrderOpenF(symbol,OO_cmd,Vo ,buyPrice ,slippage,buySL,buyTP,comentario,magicoini,_ExpDate,OO_arrow_color);
-   //ordenn.setOrden(vectorOrden,0,ticketbuystop[0],idGrilla,true);
+   ordenn.setOrden(vectorOrden,0,ticketbuystop[0],idGrilla,true);
    _ask=Ask;
    
   // ***** 2do bucle de las BUY stop 
@@ -275,7 +275,7 @@ void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope) // H,d,Vo
       
       symbol=Symbol();OO_cmd=OP_BUYSTOP;OO_arrow_color=clrWhite;
       ticketbuystop[nivel]=ope.OrderOpenF(symbol,OO_cmd,Vo ,buyPrice ,slippage,buySL,buyTP,comentario,magicoini,_ExpDate,OO_arrow_color);
-      //ordenn.setOrden(vectorOrden,nivel,ticketbuystop[nivel],idGrilla,true);  
+      ordenn.setOrden(vectorOrden,nivel,ticketbuystop[nivel],idGrilla,true);  
       //if (nivel==NBuyLimit){TechoCanal = buyTP;TechoCanalp=(nivelpip+d);Print(" TechoCanal:",TechoCanal); }
        if (nivel==NBuyLimit)
          {     TechoCanal = NormalizeDouble(_ask + 10*(nivelpip+dgrilla+gap)*_point  ,Digits);
@@ -289,7 +289,7 @@ void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope) // H,d,Vo
    buySL    = NormalizeDouble(_ask + (10*0.5*TechoCanalp)*_point    ,Digits);
    symbol=Symbol();OO_cmd=OP_BUYSTOP;OO_arrow_color=Blue;double Vo1=(2*vol);int magico1=(magicoini+1);
    ticketB2=ticketbuystop[nivel]=ope.OrderOpenF (symbol ,OO_cmd     ,Vo1 ,buyPrice ,slippage,buySL,buyTP,comentario,magico1,_ExpDate,OO_arrow_color);
-   //ordenn.setOrden(vectorOrden,nivel,ticketbuystop[nivel],idGrilla,true);  
+   ordenn.setOrden(vectorOrden,nivel,ticketbuystop[nivel],idGrilla,true);  
    
    mg.setNivelS1(buySL);
    mg.setNivelS2(buyPrice);
@@ -304,7 +304,7 @@ void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope) // H,d,Vo
    double sellSL    = 0;
    symbol=Symbol();OO_cmd=OP_SELL;OO_arrow_color=clrRed;
    ticketsellstop[0]=ope.OrderOpenF(symbol,OO_cmd,Vo ,sellPrice ,slippage,sellSL,sellTP,comentario,magicoini,_ExpDate,OO_arrow_color);
-   //ordenn.setOrden(vectorOrden,0,ticketsellstop[0],idGrilla,true);  
+   ordenn.setOrden(vectorOrden,0,ticketsellstop[0],idGrilla,true);  
    
    _bid=Bid;
    // ***** 2do bucle de las SELL stop
@@ -317,7 +317,7 @@ void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope) // H,d,Vo
     sellTP     = NormalizeDouble( _bid - 10*(nivelpip+dgrilla)*_point  ,Digits);
     symbol=Symbol();OO_cmd=OP_SELLSTOP;OO_arrow_color=clrRed;
     ticketsellstop[nivel]=ope.OrderOpenF(symbol,OO_cmd,Vo ,sellPrice ,slippage,sellSL,sellTP,comentario,magicoini,_ExpDate,OO_arrow_color);
-    //ordenn.setOrden(vectorOrden,nivel,ticketsellstop[nivel],idGrilla,true);  
+    ordenn.setOrden(vectorOrden,nivel,ticketsellstop[nivel],idGrilla,true);  
     if (nivel==NSellLimit)
       {     pisoCanal= NormalizeDouble( _bid - 10*(nivelpip+dgrilla+gap)*_point  ,Digits);
             pisoCanalp=(nivelpip+dgrilla+gap);Print(" PisoCanal:",pisoCanal);       
@@ -330,7 +330,7 @@ void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope) // H,d,Vo
    //MagicN=31415901;
    symbol=Symbol();OO_cmd=OP_SELLSTOP;OO_arrow_color=clrRed;Vo1=(2*vol); magico1=(magicoini+1);
    ticketS2=ticketsellstop[nivel]=ope.OrderOpenF(symbol,OO_cmd,Vo1 ,sellPrice ,slippage,sellSL,sellTP,comentario,magico1,_ExpDate,OO_arrow_color);
-   //ordenn.setOrden(vectorOrden,nivel,ticketsellstop[nivel],idGrilla,true);  
+   ordenn.setOrden(vectorOrden,nivel,ticketsellstop[nivel],idGrilla,true);  
    mg.setNivelI1(sellSL);
    mg.setNivelI2(sellPrice);
    mg.setNivelI3(sellTP);  
@@ -344,14 +344,14 @@ void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope) // H,d,Vo
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-//void Grilla::lanzaGrilla(Grilla* &vector[],Orden* &vectorOrden[],int &contadorGrilla,Mg &mg,Operaciones &op){
-void Grilla::lanzaGrilla(Grilla* &vector[],int &contadorGrilla,Mg &mg,Operaciones &op){
+void Grilla::lanzaGrilla(Grilla* &vector[],Orden* &vectorOrden[],int &contadorGrilla,Mg &mg,Operaciones &op){
+//void Grilla::lanzaGrilla(Grilla* &vector[],int &contadorGrilla,Mg &mg,Operaciones &op){
     vector[contadorGrilla]=new Grilla();
     vector[contadorGrilla].setIdGrilla(contadorGrilla+1000);
     vector[contadorGrilla].setPoint();
     vector[contadorGrilla].setEstadoGrilla(true);
-    //vector[contadorGrilla].ArmarGrillaInicial(mg,op,vectorOrden);
-    vector[contadorGrilla].ArmarGrillaInicial(mg,op);  
+    vector[contadorGrilla].ArmarGrillaInicial(mg,op,vectorOrden);
+    //vector[contadorGrilla].ArmarGrillaInicial(mg,op);  
     contadorGrilla++;
    
 }

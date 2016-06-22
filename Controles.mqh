@@ -33,7 +33,7 @@ public:
                     void   controlVelas(Grilla &grillaa,uint &barras_m5,uint &barras_m15,uint &barras_m30,uint &barras_h1);
                     void   Shell(string &mail,string &parameters);
                     void   canalesPisoTecho(Grilla &_grilla1);
-                    bool   limitesAlcanzados(Operaciones &o,Grilla &_grilla2,Mg &_mg1,Grilla* &vector[],int &contador);
+                    bool   limitesAlcanzados(Operaciones &o,Grilla &_grilla2,Mg &_mg1,Grilla* &vector[],Orden* &vectorOrden[],int &contador);
                     void   adaptarGrilla(Orden &orden, Grilla &_grilla3,Mg &mg);
                     void   iteraGeometria(Operaciones &opg,Grilla &grilla4,int &indice,Grilla* &vector[],Orden* &vectorOrden[],int &contadorGrilla,bool &banderaIniciaDeNuevoo,bool &automaticoo,Boton &botonn1,string lineaa,Mg &m,bool &banderaEliminaObjetoVector);
                     double DameelPrecio(int &ticket);
@@ -53,13 +53,13 @@ public:
 //************************************************************************************************
 void Controles::deleteGrilla(bool &banderaEliminaObjetoVector,int &contadorGrilla,int i,Grilla* &vector[]){
    if(banderaEliminaObjetoVector){  
-    if(contadorGrilla==1||i==contadorGrilla-1&&vector[i].getEstadoGrilla()){ 
+    if(contadorGrilla==1||i==contadorGrilla-1&&!vector[i].getEstadoGrilla()){ 
      Print("Elimino grilla ",i," contador antes ",contadorGrilla);
      delete(vector[i]);contadorGrilla--;i--;
      banderaEliminaObjetoVector=false;
    }
           
-     if(contadorGrilla-1<contadorGrilla>1&&vector[i].getEstadoGrilla()){
+     if(contadorGrilla-1<contadorGrilla>1&&!vector[i].getEstadoGrilla()){
         if(i==1){
          delete(vector[i]);contadorGrilla--;i--;
            for(int y=i;y<=contadorGrilla;y++){         
@@ -219,7 +219,7 @@ if ( _grilla3.CanalActivo[0]==1 ){
 //-------------------------------------------------------------------------------------
 //                            Limites Alcanzados
 //-------------------------------------------------------------------------------------
-bool Controles::limitesAlcanzados(Operaciones &o,Grilla &_grilla,Mg &_mg,Grilla* &vector[],int &contador){
+bool Controles::limitesAlcanzados(Operaciones &o,Grilla &_grilla,Mg &_mg,Grilla* &vector[],Orden* &vectorOrden[],int &contador){
 
   if (_grilla.getCanalRoto()==1){  
       Print( " -------------------------------------------- LIMITE DEL CANAL ALCANZADO");
@@ -241,8 +241,7 @@ bool Controles::limitesAlcanzados(Operaciones &o,Grilla &_grilla,Mg &_mg,Grilla*
      _grilla.setMagicoActual(magicoactual);
       Print("limitesAlcanzados grillakkkkkkkkkkkkkkkk  Magico actual  ... ",magicoactual," grilla",_grilla.getIdGrilla() );
          //Sleep(10000);
-      //   for(int t=0;t<1;t++)
-      //grilla.lanzaGrilla(vector,contador,_mg,o);//lanza grilla
+      //grilla.lanzaGrilla(vector,vectorOrden,contador,_mg,o);//lanza grilla
       
    }
  return true;     
@@ -291,6 +290,7 @@ void Controles::iteraGeometria(Operaciones &opg,Grilla &grilla,int &indice,Grill
             opg.cerrar_todo_pendiente(magicoActual);
             grilla.CanalActivo[0]=0; // se apaga el robot. Listo para empezar de nuevo.
             banderaEliminaObjetoVector=true;
+            grilla.setEstadoGrilla(true);
            // automaticoo=true;
             Print("***********************************************************");
             Print("* TERMINO GRILLA N°....  ",grilla.getIdGrilla());
@@ -311,8 +311,8 @@ void Controles::iteraGeometria(Operaciones &opg,Grilla &grilla,int &indice,Grill
             // automatizar
            if(automaticoo){
            banderaIniciaDeNuevoo=false;
-            //grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,m,opg);
-             grilla.lanzaGrilla(vector,contadorGrilla,m,opg);
+            grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,m,opg);
+             //grilla.lanzaGrilla(vector,contadorGrilla,m,opg);
             datetime timee=TimeCurrent();
             ObjLineaa.HLineMoveVertical(lineaa,timee);
           }else{
@@ -427,7 +427,8 @@ void Controles::resumenOrdenes(double &balanc,int magico)
      {
       if(OrderSelect(cnt,SELECT_BY_POS,MODE_TRADES))
       {
-         if(OrderSymbol()==Symbol() && OrderMagicNumber()==magico && OrderComment()==comentario)
+        // if(OrderSymbol()==Symbol() && OrderMagicNumber()==magico && OrderComment()==comentario)
+           if(OrderSymbol()==Symbol() && OrderComment()==comentario)      
            {
             // si entro aca son mis ordenes
             string tipo;
@@ -455,7 +456,7 @@ void Controles::resumenOrdenes(double &balanc,int magico)
             "__ Sstop:",Ordenes_Sell_s,
             "__ SELL:",Ordenes_Sell,
             "__ Balance:",balanc,
-            "__ Magigo:",balanc);
+            "__ Magico:",balanc);
 }
 
 //+------------------------------------------------------------------+
@@ -480,10 +481,6 @@ barra_m30 = iBars(NULL,PERIOD_M30);
 
 if( (iBars(NULL,PERIOD_H1)>2) && (barra_h1!=iBars(NULL,PERIOD_H1))   ){       // Velas de 60 minutito !!!
 barra_h1 = iBars(NULL,PERIOD_H1);
-double mg=MathPow(2,(grillaa.CanalActivo[0]-1));
-//if (mg>1)
-//Print( " --------- n=",grillaa.CanalActivo[0],"------------------MG Actual  2^n=",MathPow(2,(grillaa.CanalActivo[0]-1))," Grilla ",grillaa.getIdGrilla());
-//Print("H1");
 
 }
   }

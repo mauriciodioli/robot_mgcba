@@ -100,10 +100,10 @@ int OnInit()
    boton1.setPosicion(x,y); 
    operaciones.operacionE(email);
    ArrayResize(vector,10000);
-   ArrayResize(vectorOrden,10000); 
-   for(int t=0;t<2;t++){   
-   grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
-    //grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
+   ArrayResize(vectorOrden,100000); 
+   for(int t=0;t<3;t++){   
+   //grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
+    grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
     Print("inicia grilla N°",vector[t].getIdGrilla());
     }
    //se configura el timer con 1 o mas segundos
@@ -158,8 +158,8 @@ if (ban==1){
     boton1.setDescripcion(Boton1,":)");
     sonido.setSonido(sonidoIinicio);
     for(int t=0;t<2;t++){   
-    //grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
-    grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
+    grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
+    //grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
     Print("inicia grilla N°",vector[t].getIdGrilla());
     }
     time=TimeCurrent();
@@ -202,8 +202,8 @@ if(ban==1){
 boton4.getAccion(ban);
 if(ban==1){
  Print("SE ACCIONO EL BOTON I/O");
-  //grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
-  grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
+  grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
+  //grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
   time=TimeCurrent();
   numeroLienas++;
   string nom="linea"+IntegerToString(numeroLienas);
@@ -222,10 +222,13 @@ ObjLinea.HLineMove(linea2,vector[i].getPisoCanal());
 // Adapta la grilla
   controles.adaptarGrilla(orden,vector[i],mg1);
 // Limites alcanzados
-  controles.limitesAlcanzados(operaciones,vector[i],mg1,vector,contadorGrilla);
+  controles.limitesAlcanzados(operaciones,vector[i],mg1,vector,vectorOrden,contadorGrilla);
 // itera Geometria
   controles.iteraGeometria(operaciones,vector[i],i,vector,vectorOrden,contadorGrilla,banderaIniciaDeNuevo,automatico,boton1,linea0,mg1,banderaEliminaObjetoVector); 
+ //for(int j=0;j<OrdersTotal()/contadorGrilla;j++)
+ //Print(" orden grill ",vectorOrden[j].getIdGrilla()," id orden ",vectorOrden[j].getIdOrden()," stado orden ",vectorOrden[j].getEstadoOrden());
 
+}
 
 // ***************************************************************************
 //    VARIABLES bid ask
@@ -250,19 +253,19 @@ if( (iBars(NULL,PERIOD_M1)>2) && (barras_m1!=iBars(NULL,PERIOD_M1))   ){       /
 barras_m1 = iBars(NULL,PERIOD_M1);
 //Print("M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1");
 
-//controles.resumenOrdenes(balance,vector[i].getMagicoActual());
+ //controles.resumenOrdenes(balance,vector[0].getMagicoActual());
 
 }
-}
-for(int i=0;i<OrdersTotal();i++){
- //Print(" orden grill ",vectorOrden[i].getIdGrilla()," id orden ",vectorOrden[i].getIdOrden()," stado orden ",vectorOrden[i].getEstadoOrden());
-}
+
+
+
 
 for(int j=0;j<contadorGrilla;j++){
 //elimina objeto
-   controles.deleteGrilla(banderaEliminaObjetoVector,contadorGrilla,j,vector);
-   controles.controlVelas(vector[j],barras_m5,barras_m15,barras_m30,barras_h1);
-  }
+  //controles.deleteGrilla(banderaEliminaObjetoVector,contadorGrilla,j,vector);
+ }
+   //controles.controlVelas(vector[0],barras_m5,barras_m15,barras_m30,barras_h1);
+  
 }
 //for(int j=0;j<contadorGrilla;j++){
 // Print(j," posicion del vector mestra vector  contadorGrilla ",contadorGrilla," vector[contadorGrilla].setIdGrilla ",vector[j].getIdGrilla());

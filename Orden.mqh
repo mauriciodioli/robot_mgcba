@@ -128,9 +128,10 @@ int  Orden::getCerradasellTicket(){
 //+------------------------------------------------------------------+
 
  void Orden::setOrden(Orden* &vectorOrden[],int indice,int idOrden,int IdGrilla,bool estadoOrden){
+  vectorOrden[indice]=new Orden(); 
   vectorOrden[indice].setIdOrden(idOrden);
-  vectorOrden[indice].setIdGrilla(idGrilla);
-  vectorOrden[indice].setEstadoOrden(estadoOrden);
+  //vectorOrden[indice].setIdGrilla(idGrilla);
+  //vectorOrden[indice].setEstadoOrden(estadoOrden);
  }
   
 //+------------------------------------------------------------------+
