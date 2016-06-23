@@ -158,11 +158,7 @@ if (ban==1){
     boton1.setColor(Boton1,colorBoton1);
     boton1.setDescripcion(Boton1,":)");
     sonido.setSonido(sonidoIinicio);
-    for(int t=0;t<2;t++){   
     grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
-    //grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
-    Print("inicia grilla N°",vector[t].getIdGrilla());
-    }
     time=TimeCurrent();
     numeroLienas++;
     string nom="linea"+IntegerToString(numeroLienas);

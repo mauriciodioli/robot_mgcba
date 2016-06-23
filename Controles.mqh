@@ -53,36 +53,37 @@ public:
 //************************************************************************************************
 void Controles::deleteGrilla(bool &banderaEliminaObjetoVector,int &contadorGrilla,int i,Grilla* &vector[]){
 
-   if(banderaEliminaObjetoVector){ 
-   
-    if(i==0&&contadorGrilla==1||i==contadorGrilla-1&&!vector[i].getEstadoGrilla()){ 
-     
-      Print("grilla 00000000000000000000000000000000 ",vector[i].getIdGrilla(),"contador if limites  ",contadorGrilla," i ",i);
-      
+ if(banderaEliminaObjetoVector){ 
+          
+   if(i==0&&contadorGrilla==1||i==contadorGrilla-1&&!vector[i].getEstadoGrilla()){ 
+      Print(" 1 if entraaaaaaaaaaaaaaaaaaaaa!!! i",i," contador ",contadorGrilla); 
        delete(vector[i]); contadorGrilla--;if(i>0)i--;
        
-          Print("2222222222222222222222222222222222222222222222222");
-            
-         banderaEliminaObjetoVector=false;
-   }
+       banderaEliminaObjetoVector=false;
+       
+       Print(" 1 if eliminoooooooooooooooooooooooooooooooo!!! i",i," contador ",contadorGrilla);           
+         
+   }else{
+       Print("pasaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa i",i," contador ",contadorGrilla," grilla ",vector[i].getIdGrilla());   
+     
+     if(!vector[i].getEstadoGrilla())
+       if(contadorGrilla-1<contadorGrilla||contadorGrilla>1){
+         
+          Print(" 1 if entraaaaaaaaaaaaaaaaaaaaa!!! i",i," contador ",contadorGrilla);  
           
-     if(contadorGrilla-1<contadorGrilla>1&&!vector[i].getEstadoGrilla()){
-          Print("if grilla ",vector[i].getIdGrilla()," contadorGrilla-1 ",contadorGrilla-1," < ",contadorGrilla," >1"," estado false? ",vector[i].getEstadoGrilla());    
-          delete(vector[i]);contadorGrilla--;i--;
          
-         for(int y=i;y<=contadorGrilla;y++){         
-             vector[y]=vector[y+1]; Print("333333333333333333333333333333333333333333333333");
-         
-         
-         
-         for(int i=0;i<contadorGrilla;i++)
-         Print("Elimino grilla ",i," contador ",contadorGrilla," griiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiilaaaaaaaaaaaaaaaaaaaaaaaaaaa ",vector[i].getIdGrilla()); 
-    
-           }//fin for
+         for(int y=i;y<=contadorGrilla;y++)         
+             vector[y]=vector[y+1]; 
+             
+             delete(vector[i+1]);contadorGrilla--;if(i>0)i--;
+             Print(" 2 if eliminoooooooooooooooooooooooooooooooo!!! i",i," contador ",contadorGrilla);
+           
+           
          
           banderaEliminaObjetoVector=false;
         }//fin condicion mayor que 0   
       }//fin if bandera
+     }//fin else
 }
 
 
@@ -303,6 +304,7 @@ void Controles::iteraGeometria(Operaciones &opg,Grilla &grilla,int &indice,Grill
             opg.cerrar_todo_pendiente(magicoActual);
             grilla.CanalActivo[0]=0; // se apaga el robot. Listo para empezar de nuevo.
             banderaEliminaObjetoVector=true;//condicion para eliminar grilla del vector de grillas
+            grilla.setEstadoGrilla(false);//estado en true para eliminar la grilla esta
             grilla.setEstadoGrilla(false);//estado en true para eliminar la grilla esta
             Print("***********************************************************");
             Print("* TERMINO GRILLA N°....  ",grilla.getIdGrilla());
