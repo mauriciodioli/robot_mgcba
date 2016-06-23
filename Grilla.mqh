@@ -24,7 +24,10 @@ static int     magicoini=MagicN;
 #include "Mg.mqh"
 #include "Grilla.mqh"
 #include "Orden.mqh"
+#include "Linea.mqh"
+#include "Boton.mqh"
 Orden ordenn;
+Linea ObjLineaa;
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
@@ -101,7 +104,9 @@ public:
                     int    getTicketS2();
                     void   setEstadoGrilla(bool estadoGrilla);
                     bool   getEstadoGrilla();
-                    void lanzaGrilla(Grilla* &vector[],Orden* &vectorOrden[],int &contador,Mg &mg,Operaciones &op);
+                    void   lanzaGrilla(Grilla* &vector[],Orden* &vectorOrden[],int &contador,Mg &mg,Operaciones &op);
+                    void   lanzaGrillaAutomatica(Grilla* &vector[],Orden* &vectorOrden[],int &contadorGrilla,int &contadorGrillaAnterior,Mg &mg,Operaciones &op,bool &banderaIniciaBoton,bool automatico,Boton &boton1n,string linea);
+
                     //void lanzaGrilla(Grilla* &vector[],int &contador,Mg &mg,Operaciones &op);
                     
   };
@@ -344,6 +349,26 @@ void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope,Orden* &vectorOrden[]) /
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
+void Grilla::lanzaGrillaAutomatica(Grilla* &vector[],Orden* &vectorOrden[],int &contadorGrilla,int &contadorGrillaAnterior,Mg &mg,Operaciones &op,bool &banderaIniciaBoton,bool automatico,Boton &boton1n,string linea){
+  // automatizar
+          if(contadorGrilla<contadorGrillaAnterior){
+           if(automatico){
+             banderaIniciaBoton=false;
+             grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg,op);
+             //grilla.lanzaGrilla(vector,contadorGrilla,m,opg);
+             datetime timee=TimeCurrent();
+             ObjLinea.HLineMoveVertical(linea,timee);
+          }else{
+               banderaIniciaBoton=true;
+               boton1.setDescripcion(boton1.getNombreBoton(),"_INICIO_");
+               color colorBoton1=clrGreen;
+               boton1.setColor(boton1.getNombreBoton(),colorBoton1);
+          }
+         }
+}
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
 void Grilla::lanzaGrilla(Grilla* &vector[],Orden* &vectorOrden[],int &contadorGrilla,Mg &mg,Operaciones &op){
 //void Grilla::lanzaGrilla(Grilla* &vector[],int &contadorGrilla,Mg &mg,Operaciones &op){
     vector[contadorGrilla]=new Grilla();
@@ -351,10 +376,9 @@ void Grilla::lanzaGrilla(Grilla* &vector[],Orden* &vectorOrden[],int &contadorGr
     vector[contadorGrilla].setPoint();
     vector[contadorGrilla].setEstadoGrilla(true);
     vector[contadorGrilla].ArmarGrillaInicial(mg,op,vectorOrden);
-    //vector[contadorGrilla].ArmarGrillaInicial(mg,op);  
+    //vector[contadorGrilla].ArmarGrillaInicial(mg,op); 
     contadorGrilla++;
-   
-}
+ }
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+

@@ -41,7 +41,8 @@ Orden orden;
 //+------------------------------------------------------------------------------------+
 //| Sonidos Se declara un obj sonido el cual tiene los distintos metodos para sonidos  |
 //+------------------------------------------------------------------------------------+
-string sonidoIinicio="ini.wav";
+//string sonidoIinicio="ini.wav";
+string sonidoIinicio="ok.wav";
 string sonidoFin="stops.wav";
 //+------------------------------------------------------------------------------------+
 //| Constructor de botones (nombre del Boton, Descripcion,X,Y,Color,X tamaño,Y tamaño) |
@@ -51,7 +52,7 @@ string descripcion="_INICIO_";
 color colorBoton1=clrGreen;
 
 string Boton2="Boton2";
-string descripcion2="_RECET_";
+string descripcion2="_RESET_";
 color colorBoton2=clrRed;
 
 string Boton3="Boton3";
@@ -83,8 +84,8 @@ int numeroLienas=2;
 double equity,balance;
 uint  barras_m1,barras_m5,barras_m15,barras_m30,barras_h1;
 static long opens;
-bool banderaIniciaDeNuevo=true,automatico=false,banderaEliminaObjetoVector=false;
-int CanalActivoflag[10],contadorGrilla=0;   // 10 flags de si un canal esta activo
+bool banderaIniciaBoton=true,automatico=false,banderaEliminaObjetoVector=false;
+int CanalActivoflag[10],contadorGrilla=0,contadorGrillaAnterior=0;   // 10 flags de si un canal esta activo
 string come;
 string email="madioli26@hotmail.com";
 
@@ -101,7 +102,7 @@ int OnInit()
    operaciones.operacionE(email);
    ArrayResize(vector,10000);
    ArrayResize(vectorOrden,100000); 
-   for(int t=0;t<3;t++){   
+   for(int t=0;t<1;t++){   
    //grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
     grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
     Print("inicia grilla N°",vector[t].getIdGrilla());
@@ -150,9 +151,9 @@ if (ban==1){
 //       Los limites los hace con magico+1. 
 //       DEVUELVE: el magico actual, y el valor en CanalActivo[n]=1
   Print("SE ACCIONO EL BOTON INICIO");
-  if(banderaIniciaDeNuevo){
-    boton1.setDescripcion(Boton2,"_RECET_");
-    banderaIniciaDeNuevo=true;
+  if(banderaIniciaBoton){
+    boton1.setDescripcion(Boton2,"_RESET_");
+    banderaIniciaBoton=true;
     colorBoton1=clrLightSlateGray;
     boton1.setColor(Boton1,colorBoton1);
     boton1.setDescripcion(Boton1,":)");
@@ -175,7 +176,7 @@ if(ban==1){
 banderaEliminaObjetoVector=true;
  boton2.setDescripcion(Boton2,"-->");
  operaciones.cerrar_Ordenes();
- banderaIniciaDeNuevo=true;
+ banderaIniciaBoton=true;
  boton1.setDescripcion(Boton1,"_INICIO_");
  colorBoton1=clrGreen;
  boton1.setColor(Boton1,colorBoton1);
@@ -191,7 +192,7 @@ if(ban==1){
     
    }else{
          automatico=true;
-         banderaIniciaDeNuevo=false;
+         banderaIniciaBoton=false;
          boton3.setDescripcion(Boton3,":)");
          boton1.setDescripcion(Boton1,":)");
          colorBoton1=clrLightSlateGray;
@@ -209,6 +210,7 @@ if(ban==1){
   string nom="linea"+IntegerToString(numeroLienas);
   Linea line(nom,clrYellow,Ask,time,true);
 }
+contadorGrillaAnterior=contadorGrilla;
 
 //----------------------------------------------------------------------------
 for(int i=0;i<contadorGrilla;i++){
@@ -224,11 +226,36 @@ ObjLinea.HLineMove(linea2,vector[i].getPisoCanal());
 // Limites alcanzados
   controles.limitesAlcanzados(operaciones,vector[i],mg1,vector,vectorOrden,contadorGrilla);
 // itera Geometria
-  controles.iteraGeometria(operaciones,vector[i],i,vector,vectorOrden,contadorGrilla,banderaIniciaDeNuevo,automatico,boton1,linea0,mg1,banderaEliminaObjetoVector); 
+  
+  controles.iteraGeometria(operaciones,vector[i],i,vector,vectorOrden,mg1,banderaEliminaObjetoVector); 
+ //controles.iteraGeometria(operaciones,vector[i],i,vector,vectorOrden,contadorGrilla,banderaIniciaDeNuevo,automatico,boton1,linea0,mg1,banderaEliminaObjetoVector); 
  //for(int j=0;j<OrdersTotal()/contadorGrilla;j++)
  //Print(" orden grill ",vectorOrden[j].getIdGrilla()," id orden ",vectorOrden[j].getIdOrden()," stado orden ",vectorOrden[j].getEstadoOrden());
 
 }
+
+
+// ***************************************************************************
+//    ELIMINA OBJETO DEL ARRAY DE OBJETOS
+// ===========================================================================
+for(int j=0;j<contadorGrilla;j++){
+//elimina objeto
+  controles.deleteGrilla(banderaEliminaObjetoVector,contadorGrilla,j,vector);
+  }
+  
+  
+  
+  
+  
+// ***************************************************************************
+//    INICIA GRILLA AUTOMAICAMENTE
+// ===========================================================================  
+grilla.lanzaGrillaAutomatica(vector,vectorOrden,contadorGrilla,contadorGrillaAnterior,mg1,operaciones,banderaIniciaBoton,automatico,boton1,linea0);
+
+
+
+
+
 
 // ***************************************************************************
 //    VARIABLES bid ask
@@ -260,17 +287,15 @@ barras_m1 = iBars(NULL,PERIOD_M1);
 
 
 
-for(int j=0;j<contadorGrilla;j++){
-//elimina objeto
-  //controles.deleteGrilla(banderaEliminaObjetoVector,contadorGrilla,j,vector);
- }
-   //controles.controlVelas(vector[0],barras_m5,barras_m15,barras_m30,barras_h1);
-  
+
+// for(int i=0;i<contadorGrilla;i++)
+//          Print(" grilla ",i," contador ",contadorGrilla," 555555555555555555555555555 ",vector[i].getIdGrilla()); 
+//    
+// 
+//   //controles.controlVelas(vector[0],barras_m5,barras_m15,barras_m30,barras_h1);
+//  
 }
-//for(int j=0;j<contadorGrilla;j++){
-// Print(j," posicion del vector mestra vector  contadorGrilla ",contadorGrilla," vector[contadorGrilla].setIdGrilla ",vector[j].getIdGrilla());
-//
-// }
+
 //+------------------------------------------------------------------+
 void OnTimer()
 {
