@@ -105,7 +105,7 @@ public:
                     void   setEstadoGrilla(bool estadoGrilla);
                     bool   getEstadoGrilla();
                     void   lanzaGrilla(Grilla* &vector[],Orden* &vectorOrden[],int &contador,Mg &mg,Operaciones &op);
-                    void   lanzaGrillaAutomatica(Grilla* &vector[],Orden* &vectorOrden[],int &contadorGrilla,int &contadorGrillaAnterior,Mg &mg,Operaciones &op,bool &banderaIniciaBoton,bool automatico,Boton &boton1n,string linea);
+                    void   lanzaGrillaAutomatica(Grilla* &vector[],Orden* &vectorOrden[],int &contadorGrilla,bool &banderaAgregaGrilla,Mg &mg,Operaciones &op,bool &banderaIniciaBoton,bool automatico,Boton &boton1n,string linea);
 
                     //void lanzaGrilla(Grilla* &vector[],int &contador,Mg &mg,Operaciones &op);
                     
@@ -349,10 +349,11 @@ void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope,Orden* &vectorOrden[]) /
 //+------------------------------------------------------------------+
 //|                                                                  |
 //+------------------------------------------------------------------+
-void Grilla::lanzaGrillaAutomatica(Grilla* &vector[],Orden* &vectorOrden[],int &contadorGrilla,int &contadorGrillaAnterior,Mg &mg,Operaciones &op,bool &banderaIniciaBoton,bool automatico,Boton &boton1n,string linea){
+void Grilla::lanzaGrillaAutomatica(Grilla* &vector[],Orden* &vectorOrden[],int &contadorGrilla,bool &banderaAgregaGrilla,Mg &mg,Operaciones &op,bool &banderaIniciaBoton,bool automatico,Boton &boton1n,string linea){
   // automatizar
-          if(contadorGrilla<contadorGrillaAnterior){
+          //if(banderaAgregaGrilla){
            if(automatico){
+             banderaAgregaGrilla=false;
              banderaIniciaBoton=false;
              grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg,op);
              //grilla.lanzaGrilla(vector,contadorGrilla,m,opg);
@@ -364,7 +365,7 @@ void Grilla::lanzaGrillaAutomatica(Grilla* &vector[],Orden* &vectorOrden[],int &
                color colorBoton1=clrGreen;
                boton1.setColor(boton1.getNombreBoton(),colorBoton1);
           }
-         }
+         //}
 }
 //+------------------------------------------------------------------+
 //|                                                                  |

@@ -84,8 +84,8 @@ int numeroLienas=2;
 double equity,balance;
 uint  barras_m1,barras_m5,barras_m15,barras_m30,barras_h1;
 static long opens;
-bool banderaIniciaBoton=true,automatico=false,banderaEliminaObjetoVector=false;
-int CanalActivoflag[10],contadorGrilla=0,contadorGrillaAnterior=0;   // 10 flags de si un canal esta activo
+bool banderaIniciaBoton=true,automatico=false,banderaEliminaObjetoVector=false,banderaAgregaGrilla=false;
+int CanalActivoflag[10],contadorGrilla=0;   // 10 flags de si un canal esta activo
 string come;
 string email="madioli26@hotmail.com";
 
@@ -206,12 +206,13 @@ if(ban==1){
   string nom="linea"+IntegerToString(numeroLienas);
   Linea line(nom,clrYellow,Ask,time,true);
 }
-contadorGrillaAnterior=contadorGrilla;
-
+   
+  
 //----------------------------------------------------------------------------
 for(int i=0;i<contadorGrilla;i++){
 //---------------------Mueve lineas-------------------------------------------
-
+//
+if(vector[i].getEstadoGrilla()){
 ObjLinea.HLineMove(linea1,vector[i].getTechoCanal());
 ObjLinea.HLineMove(linea2,vector[i].getPisoCanal());
 //Print(i," posicion del vector contadorGrilla ",contadorGrilla," vector[contadorGrilla].setIdGrilla ",vector[i].getIdGrilla());
@@ -223,30 +224,30 @@ ObjLinea.HLineMove(linea2,vector[i].getPisoCanal());
   controles.limitesAlcanzados(operaciones,vector[i],mg1,vector,vectorOrden,contadorGrilla);
 // itera Geometria
   
-  controles.iteraGeometria(operaciones,vector[i],i,vector,vectorOrden,mg1,banderaEliminaObjetoVector); 
- //controles.iteraGeometria(operaciones,vector[i],i,vector,vectorOrden,contadorGrilla,banderaIniciaDeNuevo,automatico,boton1,linea0,mg1,banderaEliminaObjetoVector); 
- //for(int j=0;j<OrdersTotal()/contadorGrilla;j++)
- //Print(" orden grill ",vectorOrden[j].getIdGrilla()," id orden ",vectorOrden[j].getIdOrden()," stado orden ",vectorOrden[j].getEstadoOrden());
-
-}
-
-
-// ***************************************************************************
-//    ELIMINA OBJETO DEL ARRAY DE OBJETOS
-// ===========================================================================
-for(int j=0;j<contadorGrilla;j++){
-//elimina objeto
-  controles.deleteGrilla(banderaEliminaObjetoVector,contadorGrilla,j,vector);
-  }
-  
-  
-  
-  
+  controles.iteraGeometria(operaciones,vector[i],vectorOrden,mg1,banderaEliminaObjetoVector); 
   
 // ***************************************************************************
 //    INICIA GRILLA AUTOMAICAMENTE
 // ===========================================================================  
-grilla.lanzaGrillaAutomatica(vector,vectorOrden,contadorGrilla,contadorGrillaAnterior,mg1,operaciones,banderaIniciaBoton,automatico,boton1,linea0);
+if(!vector[i].getEstadoGrilla())
+grilla.lanzaGrillaAutomatica(vector,vectorOrden,contadorGrilla,banderaAgregaGrilla,mg1,operaciones,banderaIniciaBoton,automatico,boton1,linea0);
+  }
+}
+
+
+// ***************************************************************************
+// ELIMINA OBJETO DEL ARRAY DE OBJETOS NO ELIMINA BIEN LOS OBJETOS DE LA GRILLA, METODO DESABILITADO
+// ===========================================================================
+//for(int j=contadorGrilla-1;j>=0;j--){
+//elimina objeto
+  //Print("entra j",j," contador ",contadorGrilla);
+  //controles.deleteGrilla(banderaEliminaObjetoVector,contadorGrilla,j,vector);  
+  
+ //}
+  
+
+  
+  
 
 
 
