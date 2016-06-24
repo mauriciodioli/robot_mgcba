@@ -270,7 +270,7 @@ bool Controles::limitesAlcanzados(Operaciones &o,Grilla &_grilla,Mg &_mg,Grilla*
      //Print("Magico  actual  ... ",magicoactual );
      magicoactual=_grilla.armar_prox_paso(o,_grilla);//  esta incrementa CanalActivo[0] y magicoactual
      _grilla.setMagicoActual(magicoactual);
-      Print("limitesAlcanzados grillakkkkkkkkkkkkkkkk  Magico actual  ... ",magicoactual," grilla",_grilla.getIdGrilla() );
+      //Print("limitesAlcanzados grillakkkkkkkkkkkkkkkk  Magico actual  ... ",magicoactual," grilla",_grilla.getIdGrilla() );
          //Sleep(10000);
       //grilla.lanzaGrilla(vector,vectorOrden,contador,_mg,o);//lanza grilla
       
@@ -295,7 +295,7 @@ void Controles::iteraGeometria(Operaciones &opg,Grilla &grilla,Orden* &vectorOrd
   if (detectar_si_entro_buy(grilla.getMagicoActual()) ||  detectar_si_entro_sell(grilla.getMagicoActual()))
    {
    
-      Print("iteraGeometria detectar_si_entro_buy(grilla.getMagicoActual()) ",detectar_si_entro_buy(grilla.getMagicoActual())," grilla.getMagicoActual() " ,grilla.getMagicoActual()," ALERT Entro nuevo nivel de MG. ",grilla.getIdGrilla()); 
+      //Print("iteraGeometria detectar_si_entro_buy(grilla.getMagicoActual()) ",detectar_si_entro_buy(grilla.getMagicoActual())," grilla.getMagicoActual() " ,grilla.getMagicoActual()," ALERT Entro nuevo nivel de MG. ",grilla.getIdGrilla()); 
       int magicoActual=grilla.armar_prox_paso(opg,grilla);
       grilla.setMagicoActual(magicoActual);//  incrementa CanalActivo[0]
    

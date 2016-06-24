@@ -212,26 +212,26 @@ if(ban==1){
 for(int i=0;i<contadorGrilla;i++){
 //---------------------Mueve lineas-------------------------------------------
 //
-if(vector[i].getEstadoGrilla()){
-ObjLinea.HLineMove(linea1,vector[i].getTechoCanal());
-ObjLinea.HLineMove(linea2,vector[i].getPisoCanal());
-//Print(i," posicion del vector contadorGrilla ",contadorGrilla," vector[contadorGrilla].setIdGrilla ",vector[i].getIdGrilla());
- // Monitoreo del piso y techo del canal. (depues seran adaptativos)
-  controles.canalesPisoTecho(vector[i]);
-// Adapta la grilla
-  controles.adaptarGrilla(orden,vector[i],mg1);
-// Limites alcanzados
-  controles.limitesAlcanzados(operaciones,vector[i],mg1,vector,vectorOrden,contadorGrilla);
-// itera Geometria
-  
-  controles.iteraGeometria(operaciones,vector[i],vectorOrden,mg1,banderaEliminaObjetoVector); 
-  
-// ***************************************************************************
-//    INICIA GRILLA AUTOMAICAMENTE
-// ===========================================================================  
-if(!vector[i].getEstadoGrilla())
-grilla.lanzaGrillaAutomatica(vector,vectorOrden,contadorGrilla,banderaAgregaGrilla,mg1,operaciones,banderaIniciaBoton,automatico,boton1,linea0);
-  }
+if(vector[i].getEstadoGrilla()){ //incio if que filtra las grillas eliminadas
+      ObjLinea.HLineMove(linea1,vector[i].getTechoCanal());
+      ObjLinea.HLineMove(linea2,vector[i].getPisoCanal());
+      //Print(i," posicion del vector contadorGrilla ",contadorGrilla," vector[contadorGrilla].setIdGrilla ",vector[i].getIdGrilla());
+       // Monitoreo del piso y techo del canal. (depues seran adaptativos)
+        controles.canalesPisoTecho(vector[i]);
+      // Adapta la grilla
+        controles.adaptarGrilla(orden,vector[i],mg1);
+      // Limites alcanzados
+        controles.limitesAlcanzados(operaciones,vector[i],mg1,vector,vectorOrden,contadorGrilla);
+      // itera Geometria
+        
+        controles.iteraGeometria(operaciones,vector[i],vectorOrden,mg1,banderaEliminaObjetoVector); 
+        
+      // ***************************************************************************
+      //    INICIA GRILLA AUTOMAICAMENTE
+      // ===========================================================================  
+      if(!vector[i].getEstadoGrilla())
+         grilla.lanzaGrillaAutomatica(vector,vectorOrden,contadorGrilla,banderaAgregaGrilla,mg1,operaciones,banderaIniciaBoton,automatico,boton1,linea0);
+  }//fin de primer if
 }
 
 
@@ -277,7 +277,7 @@ if( (iBars(NULL,PERIOD_M1)>2) && (barras_m1!=iBars(NULL,PERIOD_M1))   ){       /
 barras_m1 = iBars(NULL,PERIOD_M1);
 //Print("M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1");
 
- //controles.resumenOrdenes(balance,vector[0].getMagicoActual());
+ controles.resumenOrdenes(balance,vector[0].getMagicoActual());
 
 }
 
@@ -285,12 +285,8 @@ barras_m1 = iBars(NULL,PERIOD_M1);
 
 
 
-// for(int i=0;i<contadorGrilla;i++)
-//          Print(" grilla ",i," contador ",contadorGrilla," 555555555555555555555555555 ",vector[i].getIdGrilla()); 
-//    
-// 
-//   //controles.controlVelas(vector[0],barras_m5,barras_m15,barras_m30,barras_h1);
-//  
+
+   //controles.controlVelas(vector[0],barras_m5,barras_m15,barras_m30,barras_h1);
 }
 
 //+------------------------------------------------------------------+
