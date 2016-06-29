@@ -461,7 +461,6 @@ void Operaciones::cerrar_todo_pendiente(int &magico)
      {
       int ordenselect=OrderSelect(i,SELECT_BY_POS);
       int type=OrderType();
- Print("cerrar_todo_pendiente magico ",magico,"= OrderMagicNumber() ",OrderMagicNumber());
       if(( OrderSymbol()==Symbol()) && (OrderMagicNumber()==magico)) // si son las mias
         {
          

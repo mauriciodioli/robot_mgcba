@@ -119,8 +119,7 @@ if ( _grilla1.getCanalActivo()==1 ) {
        
        _grilla1.setCanal_techo(1);     
        _grilla1.setCanalActivoFlag(1);  
-       Print("  _grilla1.getCanal_techo(1); ",_grilla1.getCanal_techo());    
-   
+     
      }
     
     if ((Ask<_grilla1.getPisoCanal()) ||detectar_si_entro_sell(_grilla1.getMagicoActual())) {
@@ -257,7 +256,7 @@ if ( _grilla3.getCanalActivo()==1 ){
 bool Controles::limitesAlcanzados(Operaciones &o,Grilla &_grilla,Mg &_mg,Grilla* &vector[],Orden* &vectorOrden[],int &contador){
   
   if (_grilla.getCanalRoto()==1){  
-      Print( " -------------------------------------------- LIMITE DEL CANAL ALCANZADO");
+      Print( " -------------------------------------------- LIMITE DEL CANAL ALCANZADO GRILLA: ",_grilla.getIdGrilla());
       
       int magico=_grilla.getMagicoActual()-1;
       int magicoactual=_grilla.getMagicoActual();
@@ -267,7 +266,7 @@ bool Controles::limitesAlcanzados(Operaciones &o,Grilla &_grilla,Mg &_mg,Grilla*
       
       
       _grilla.setCanalRoto(0);
-     Print( " -------------------------------------------- STATUS CANAL: ", _grilla.getIdGrilla());
+     Print( " -------------------------------------------- STATUS CANAL GRILLA: ", _grilla.getIdGrilla());
       
       o.arma_matrix(_mg);//    arma los arreglos arr_impar   arr_par   ab_impar   ab_par
       
@@ -291,12 +290,12 @@ void Controles::iteraGeometria(Operaciones &opg,Grilla &grilla,Orden* &vectorOrd
     
   if (grilla.getCanalActivo()>1)   {        // aca comienza la iteracion de la geometria 
    //Print("idGrilla ",grilla.getIdGrilla(), " -------------------------------------------- MG CANAL: ",grilla.getCanalActivo()," magicoActual ",grilla.getMagicoActual());
+   
    // Al entrar aca, esta vigente la B1 o la S1 y ya esta armado el paso 2
    //    Y el magico actual es el de la orden stop recien puesta
    //    Como 1ra forma de saber si salto la orden stop actual, o sea si paso al prox paso   
    if (detectar_si_entro_buy(grilla.getMagicoActual()) ||  detectar_si_entro_sell(grilla.getMagicoActual()))
    {
-   
       int magicoActual=grilla.armar_prox_paso(opg,grilla);
       grilla.setMagicoActual(magicoActual);//  incrementa CanalActivo[0]
    }
@@ -325,7 +324,7 @@ void Controles::iteraGeometria(Operaciones &opg,Grilla &grilla,Orden* &vectorOrd
             grilla.setEstadoGrilla(false);//estado en true para eliminar la grilla esta
            
             Print("***********************************************************");
-            Print("* TERMINO GRILLA N°.... ",grilla.getIdGrilla()," estado ",grilla.getEstadoGrilla());
+            Print("* TERMINO GRILLA N°.... ",grilla.getIdGrilla()," volumen operado ",grilla.getVolumen());
             Print("***********************************************************");
             Print("* Llego al TP y al B=0 Listo para empezar de nuevo   ....  ");
             Print("***********************************************************");

@@ -20,21 +20,25 @@ private:
   int tamaX;
   int tamaY;
   color idColor;
+  string colFuente;
 public:
                      Boton();
                      Boton(string &nombre,string &descripcion,int x,int y,color &c);
                      Boton(string &nombre,string &descripcion,int x,int y,color &c,int tamX,int tamY);
                      
                     ~Boton();
-                    void getBoton();
+                    void   getBoton();
                     string getNombreBoton();
-                    void delet(string nomb);
-                    void setColor(string nombre,color &colorBoton);
-                    void getAccion(bool &bandera);
-                    void setPosicion(int &valX,int &valY);
-                    void setTam(int &tamX,int &TamY);
-                    void setDescripcion(string nom,string descrip);
+                    void   delet(string nomb);
+                    void   setColor(string nombre,color &colorBoton);
+                    void   getAccion(bool &bandera);
+                    void   setPosicion(int &valX,int &valY);
+                    void   setTam(int &tamX,int &TamY);
+                    void   setDescripcion(string nom,string descrip);
+                    void   setColorFuente(color colorfuente);
+                    string  getColorFuente();
                     static void delet(int nbotones);  
+                    
                     
   };
 // ***************************************************************************
@@ -97,6 +101,18 @@ ObjectSetInteger(0,nombre,OBJPROP_BGCOLOR, colorBoton);
 //+------------------------------------------------------------------+
 string Boton::getNombreBoton(void){
  return nombreBoton;
+}
+//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+void Boton::setColorFuente(color colorfuente){
+ colFuente=colorfuente;
+ ObjectSetInteger(0,nombreBoton,OBJPROP_COLOR, colorfuente);
+}//+------------------------------------------------------------------+
+//|                                                                  |
+//+------------------------------------------------------------------+
+string Boton::getColorFuente(void){
+ return colFuente;
 }
 //+------------------------------------------------------------------+
 //|                                                                  |

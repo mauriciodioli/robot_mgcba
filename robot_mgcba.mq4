@@ -91,6 +91,9 @@ int OnInit()
   //-----------------------inicia operaciones como marca el diagrama de flujos
    int x=40;   int y=100;
    boton1.setPosicion(x,y); 
+   //boton1.setColorFuente(clrGreen);
+   //boton2.setColorFuente(clrRed);
+   //boton3.setColorFuente(clrBlue);
    operaciones.operacionE(email);
    ArrayResize(vector,10000);
    ArrayResize(vectorOrden,100000); 

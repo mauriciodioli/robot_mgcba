@@ -39,6 +39,7 @@ private:
  double  _point;
  double  _ask;
  double  _bid;
+ double  volumen;
  double  Diametro;
  double  TechoCanal;
  double  TechoCanalp;
@@ -61,11 +62,8 @@ private:
  int     ticketSellstop;
  int     canalActivo; 
  int     canalActivoflag;
-private:
- //int CanalActivo[10];
- //int CanalActivoflag[10]; 
- int ticketsellstop[100];
- int ticketbuystop[100]; 
+ int     ticketsellstop[100];
+ int     ticketbuystop[100]; 
 public:
                     Grilla();
                     ~Grilla();
@@ -76,6 +74,8 @@ public:
                     int    armar_prox_paso(Operaciones &op,Grilla &grilla);
                     void   setIdGrilla(int idgrilla);
                     int    getIdGrilla();
+                    void   setVolumen(double Volumen);
+                    double getVolumen();
                     void   setMagicoInicial(int magicoInicial);
                     int    getMagicoInicial();
                     void   setMagicoActual(int &magicoActual);
@@ -108,9 +108,7 @@ public:
                     int    getNBuyLimit();
                     void   setNSellLimit(int &nsellimit);
                     int    getNSellLimit();
-                    //void   setTicketbuystop(int tickeBuy);
                     int    getTicketbuystop(int nb);
-                    //void   setTicketsellstop(int ticketSell);
                     int    getTicketsellstop(int ns);
                     void   setTicketB2(int ticketb2);
                     int    getTicketB2();
@@ -120,9 +118,7 @@ public:
                     bool   getEstadoGrilla();
                     void   lanzaGrilla(Grilla* &vector[],Orden* &vectorOrden[],int &contador,Mg &mg,Operaciones &op);
                     void   lanzaGrillaAutomatica(Grilla* &vector[],Orden* &vectorOrden[],int &contadorGrilla,bool &banderaAgregaGrilla,Mg &mg,Operaciones &op,bool &banderaIniciaBoton,bool automatico,Boton &boton1n,string linea);
-                    
-                    //void lanzaGrilla(Grilla* &vector[],int &contador,Mg &mg,Operaciones &op);
-                    
+                         
   };
 void   Grilla::setEstadoGrilla(bool estadoGrilla){
  estado=estadoGrilla;
@@ -135,6 +131,12 @@ void Grilla::setIdGrilla(int idgrilla){
 }
 int Grilla::getIdGrilla(void){
  return idGrilla;
+}
+void  Grilla::setVolumen(double Volumen){
+ volumen=Volumen;
+}
+double Grilla::getVolumen(void){
+ return volumen;
 }
 void  Grilla::setNordenes(int &norden){
   Nordenes=norden;
@@ -171,8 +173,7 @@ void Grilla::setCanalActivo(int &canalactivo){
  //CanalActivo[0]=canalActivo;
 }
 int Grilla::getCanalActivo(void){
- return canalActivo;
-  //return CanalActivo[0];
+ return canalActivo;  
 }
 void Grilla::setCanalActivoFlag(int canalActivoFlag){
  canalActivoflag=canalActivoFlag;
@@ -180,22 +181,13 @@ void Grilla::setCanalActivoFlag(int canalActivoFlag){
 int  Grilla::getCanalActivoFlag(){
  return canalActivoflag;
 }
-//void Grilla::setTicketbuystop(int tickeBuy,){
-// ticketBuystop=tickeBuy;
-//}
 int  Grilla::getTicketbuystop(int nb){
  
  return ticketbuystop[nb];
 }
-//void Grilla::setTicketsellstop(int ticketSell){
-//  ticketSellstop=ticketSell;
-//}
 int  Grilla::getTicketsellstop(int ns){
   return ticketsellstop[ns];
 }
-//void Grilla::setTicketB2(int ticketb2){
-// ticketB2=ticketb2;
-//}
 int Grilla::getTicketB2(){
  return ticketB2;
 }
@@ -286,7 +278,7 @@ void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope,Orden* &vectorOrden[]) /
 {
    Print("magicoini ",magicoini," getIdGrilla() ",getIdGrilla());
    setMagicoInicial(magicoini+idGrilla);
-   Print("ttttttttttttttttttttttttttttttttttttttttttttidGrilla",getIdGrilla()," mmmmmmmmmmmmmmmmmmmmmmmmmagico inicial ",getMagicoInicial());
+   Print("idGrillaaaaaaaaaaaaaaaaaaaaa",getIdGrilla()," mmmmmmmmmmmmmmmmmmmmmmmmmagico inicial ",getMagicoInicial());
    nivel=0; nivelpip=0;
    Nordenes = (int) ( Dtot /  (dgrilla+gap)  ) ;
    NBuyLimit = Nordenes/2 ;
@@ -295,14 +287,12 @@ void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope,Orden* &vectorOrden[]) /
    datetime _ExpDate=0; //TimeCurrent()+600*60;      // 10 horas de caducidad. 
    int a=1;
    setCanalActivo(a);
-//   Print(" setCanalllllllllllllllllllllllllllllllllllllllllllllllllllActivo(1) ",getCanalActivo());
-//   
    //ArrayResize(ticketbuystop,NBuyLimit+10);
    //ArrayResize(ticketsellstop,NSellLimit+10);
 
    //double Vo = 0.5*vol;
    double Vo = vol;
-   
+   setVolumen(Vo);
    Print("Grilla INI:   D: ",Dtot,"  d: ",dgrilla,"  gap: ",gap,"  Nordenes:  ",Nordenes,"  NBuy_Stop:  ",NBuyLimit,"  NSell_Stop:  ",NSellLimit," Vo ",Vo);
   
  
@@ -377,7 +367,7 @@ void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope,Orden* &vectorOrden[]) /
     ordenn.setOrden(vectorOrden,nivel,ticketsellstop[nivel],idGrilla,true);  
     if (nivel==NSellLimit)
       {     pisoCanal= NormalizeDouble( _bid - 10*(nivelpip+dgrilla+gap)*_point  ,Digits);
-            pisoCanalp=(nivelpip+dgrilla+gap);Print(" PisvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvoCanal:",pisoCanal);       
+            pisoCanalp=(nivelpip+dgrilla+gap);Print(" PisoCanal:",pisoCanal);       
       }
    }
    // ***** 3ro Coloco el SELL 2Vo
@@ -425,13 +415,11 @@ void Grilla::lanzaGrillaAutomatica(Grilla* &vector[],Orden* &vectorOrden[],int &
 //|                                                                  |
 //+------------------------------------------------------------------+
 void Grilla::lanzaGrilla(Grilla* &vector[],Orden* &vectorOrden[],int &contadorGrilla,Mg &mg,Operaciones &op){
-//void Grilla::lanzaGrilla(Grilla* &vector[],int &contadorGrilla,Mg &mg,Operaciones &op){
     vector[contadorGrilla]=new Grilla();
     vector[contadorGrilla].setIdGrilla(contadorGrilla*1000);
     vector[contadorGrilla].setPoint();
     vector[contadorGrilla].setEstadoGrilla(true);
     vector[contadorGrilla].ArmarGrillaInicial(mg,op,vectorOrden);
-    //vector[contadorGrilla].ArmarGrillaInicial(mg,op); 
     contadorGrilla++;
  }
 //+------------------------------------------------------------------+
@@ -446,11 +434,12 @@ int Grilla::armar_prox_paso(Operaciones &op,Grilla &grillaa){
       int magicoo=grillaa.getMagicoActual();
       magicoo ++;
      
-      string symbol;int OO_cmd;int OO_slippage=10;datetime OO_expiration=0;color OO_arrow_color;
-    
-      double Vo=vol*MathPow(2,valor);
+      string symbol;double volu;int OO_cmd;int OO_slippage=10;datetime OO_expiration=0;color OO_arrow_color;
+      
+      double Vo;
+      Vo=vol*MathPow(2,valor);
       uint Ticket;
-     
+      setVolumen(Vo);
 if (grillaa.getCanalActivoFlag()==1){         // ARRIBA
  
 if ((grillaa.getCanalActivo()&1)==1){         // IMPAR
@@ -460,7 +449,7 @@ if ((grillaa.getCanalActivo()&1)==1){         // IMPAR
    double buyTP = op.arr_impar[2];     //TP+
    
    Print("-------------Orden MG BUYSTOP arr impar",buyPrice," buyTP ",buyTP," buySL ",buySL, " Vo=",Vo);
-   symbol=Symbol(); OO_cmd=OP_BUYSTOP; OO_arrow_color=clrBlue;
+   symbol=Symbol();volu=getVolumen(); OO_cmd=OP_BUYSTOP; OO_arrow_color=clrBlue;
    Ticket=op.OrderOpenF(symbol,OO_cmd,(Vo),buyPrice ,OO_slippage,buySL,buyTP,comentario,magicoo,OO_expiration,OO_arrow_color);
          
    orden.setTicket(Ticket);
