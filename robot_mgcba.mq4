@@ -29,14 +29,6 @@ Grilla *vector[];
 Grilla grilla;
 Orden  *vectorOrden[];
 Orden orden;
-//extern double   vol=0.1;  //       Volumen inicial
-//extern double   dgrilla=2;    // (d) grilla inicial
-//extern int      Dtot=50;    //    (D)  grilla inicial
-//extern int      slippage=10;               // Deslizamiento maximo permitido.
-//static int magicoini=MagicN;
-//+------------------------------------------------------------------------------------+
-//| Se crea una grilla                                                                 |
-//+------------------------------------------------------------------------------------+
 
 //+------------------------------------------------------------------------------------+
 //| Sonidos Se declara un obj sonido el cual tiene los distintos metodos para sonidos  |
@@ -63,10 +55,10 @@ string Boton4="Boton4";
 string descripcion4="I/O";
 color colorBoton4=clrMaroon;
 
-Boton boton1(Boton1,descripcion,10,50,colorBoton1);//boton 1
-Boton boton2(Boton2,descripcion2,10,50,colorBoton2);
-Boton boton3(Boton3,descripcion3,10,150,colorBoton3,100,50);
-Boton boton4(Boton4,descripcion4,10,200,colorBoton4,100,50);
+Boton boton1(Boton1,descripcion,40,50,colorBoton1);//boton 1
+Boton boton2(Boton2,descripcion2,40,50,colorBoton2);
+Boton boton3(Boton3,descripcion3,40,150,colorBoton3,100,50);
+Boton boton4(Boton4,descripcion4,40,200,colorBoton4,100,50);
 
 //+------------------------------------------------------------------------------------------------------------------------------+
 //| Constructor de lineas (nombre del Boton, Color,precio,tiempo,bandera true si es linea vertical false si es linea horizontal) |
@@ -97,7 +89,7 @@ int OnInit()
   {
   
   //-----------------------inicia operaciones como marca el diagrama de flujos
-   int x=10;   int y=100;
+   int x=40;   int y=100;
    boton1.setPosicion(x,y); 
    operaciones.operacionE(email);
    ArrayResize(vector,10000);
@@ -144,8 +136,7 @@ GlobalVariableSet( "vGrafEquity", equity );
 
 // ********************* LLAMA BOTON **********************************
 bool ban;
-
-boton1.getAccion(ban);
+boton1.getAccion(ban);//INICIO
 if (ban==1){
 //       H,d,Vo,desliz, magicoinicial. 
 //       Los limites los hace con magico+1. 
@@ -167,7 +158,7 @@ if (ban==1){
                                
 }
 
-boton2.getAccion(ban);
+boton2.getAccion(ban);//RESET
 if(ban==1){
 banderaEliminaObjetoVector=true;
  boton2.setDescripcion(Boton2,"-->");
@@ -179,7 +170,7 @@ banderaEliminaObjetoVector=true;
  //ArrayFree(vector);ArrayResize(vector,1000); 
 }
 
-boton3.getAccion(ban);
+boton3.getAccion(ban);//AUTO
 if(ban==1){
    sonido.setSonido(sonidoIinicio);
   if(automatico){
@@ -196,7 +187,7 @@ if(ban==1){
         }
 }
 
-boton4.getAccion(ban);
+boton4.getAccion(ban);//I/O
 if(ban==1){
  Print("SE ACCIONO EL BOTON I/O");
   grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
@@ -209,10 +200,10 @@ if(ban==1){
    
   
 //----------------------------------------------------------------------------
-for(int i=0;i<contadorGrilla;i++){
+for(int i=0;i<contadorGrilla;i++){// scan de todas las grillas !!!
 //---------------------Mueve lineas-------------------------------------------
 //
-if(vector[i].getEstadoGrilla()){ //incio if que filtra las grillas eliminadas
+if(vector[i].getEstadoGrilla()){ //entro si la grilla existe
       ObjLinea.HLineMove(linea1,vector[i].getTechoCanal());
       ObjLinea.HLineMove(linea2,vector[i].getPisoCanal());
       //Print(i," posicion del vector contadorGrilla ",contadorGrilla," vector[contadorGrilla].setIdGrilla ",vector[i].getIdGrilla());
@@ -221,11 +212,11 @@ if(vector[i].getEstadoGrilla()){ //incio if que filtra las grillas eliminadas
       // Adapta la grilla
         controles.adaptarGrilla(orden,vector[i],mg1);
       // Limites alcanzados
-        controles.limitesAlcanzados(operaciones,vector[i],mg1,vector,vectorOrden,contadorGrilla);
-      // itera Geometria
-        
-        controles.iteraGeometria(operaciones,vector[i],vectorOrden,mg1,banderaEliminaObjetoVector); 
-        
+        controles.limitesAlcanzados(operaciones,vector[i],mg1,vector,vectorOrden,contadorGrilla);      
+      // itera Geometria        
+        controles.iteraGeometria(operaciones,vector[i],vectorOrden,mg1,banderaEliminaObjetoVector);
+         
+               
       // ***************************************************************************
       //    INICIA GRILLA AUTOMAICAMENTE
       // ===========================================================================  
@@ -277,7 +268,7 @@ if( (iBars(NULL,PERIOD_M1)>2) && (barras_m1!=iBars(NULL,PERIOD_M1))   ){       /
 barras_m1 = iBars(NULL,PERIOD_M1);
 //Print("M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1");
 
- controles.resumenOrdenes(balance,vector[0].getMagicoActual());
+ //controles.resumenOrdenes(balance,vector[0].getMagicoActual());
 
 }
 
