@@ -11,6 +11,8 @@
 #include "Controles.mqh"
 #include "Mg.mqh"
 #include "Operaciones.mqh"
+#include "Limites.mqh"
+
 
 
 //+------------------------------------------------------------------+
@@ -24,8 +26,7 @@ private:
    double _point;
    uint   Ticket;
    int    magicoactual;
-public:
-   int CanalActivoflag[10];
+ public:
    double arr_par[3];
    double arr_impar[3];
    double ab_par[3];
@@ -42,7 +43,7 @@ public:
                                 double &OO_takeprofit,
                                 string &OO_comment,
                                 int &OO_magic,
-                                datetime &OO_expiration,
+                                datetime OO_expiration,
                                 color &OO_arrow_color);
    void operacionApertura(double &point);
    void cerrar_todo(int &magico);
@@ -51,11 +52,12 @@ public:
    void operacionE(string &mail);
    void arma_matrix(Mg &_mg);
    
+   
   };
 //----------------------------------------------------------------------
 //                   zona de get y set
 //----------------------------------------------------------------------
-
+  
 //+----------------------------------------------------------------------------------------------------------------------+
 //+----------------------------------------------------------------------------------------------------------------------+
 //+----------------------------------------------------------------------------------------------------------------------+
@@ -82,7 +84,7 @@ int Operaciones::OrderOpenF(string &OO_symbol,
                             double   &OO_takeprofit,
                             string   &OO_comment,
                             int      &OO_magic,
-                            datetime &OO_expiration,
+                            datetime OO_expiration,
                             color    &OO_arrow_color)
   {
    int      result      = -1;    //result of opening an order
@@ -494,14 +496,14 @@ arr_impar[2]=_mg.getNivelS3();
 arr_par[0]=_mg.getNivelS0();
 arr_par[1]=_mg.getNivelS1();
 arr_par[2]=_mg.getNivelS2();
-//Print("-------------Matrix S  S0=",_mg.getNivelS0()," S1=",_mg.getNivelS1()," S2=",_mg.getNivelS2(), " S3=",_mg.getNivelS3());
+Print("-------------Matrix S  S0=",_mg.getNivelS0()," S1=",_mg.getNivelS1()," S2=",_mg.getNivelS2(), " S3=",_mg.getNivelS3());
 ab_impar[0]=_mg.getNivelI1();
 ab_impar[1]=_mg.getNivelI2();
 ab_impar[2]=_mg.getNivelI3();
 ab_par[0]=_mg.getNivelI0();
 ab_par[1]=_mg.getNivelI1();
 ab_par[2]=_mg.getNivelI2();
-//Print("-------------Matrix S  I0=",_mg.getNivelI0()," I1=",_mg.getNivelI1()," I2=",_mg.getNivelI2(), " i3=",_mg.getNivelI3());
+Print("-------------Matrix S  I0=",_mg.getNivelI0()," I1=",_mg.getNivelI1()," I2=",_mg.getNivelI2(), " I3=",_mg.getNivelI3());
 }
 
 //+------------------------------------------------------------------+

@@ -24,7 +24,7 @@ Controles controles;
 Operaciones operaciones;
 Linea ObjLinea;
 Sonido sonido;
-Mg mg1;
+Mg *mg[];
 Grilla *vector[];
 Grilla grilla;
 Orden  *vectorOrden[];
@@ -96,10 +96,11 @@ int OnInit()
    //boton3.setColorFuente(clrBlue);
    operaciones.operacionE(email);
    ArrayResize(vector,10000);
+   ArrayResize(mg,10000);
    ArrayResize(vectorOrden,100000); 
    for(int t=0;t<1;t++){   
    //grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
-    grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
+    grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg,operaciones);
     Print("inicia grilla N°",vector[t].getIdGrilla());
     }
    //se configura el timer con 1 o mas segundos
@@ -152,7 +153,7 @@ if (ban==1){
     boton1.setColor(Boton1,colorBoton1);
     boton1.setDescripcion(Boton1,":)");
     sonido.setSonido(sonidoIinicio);
-    grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
+    grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg,operaciones);
     time=TimeCurrent();
     numeroLienas++;
     string nom="linea"+IntegerToString(numeroLienas);
@@ -193,7 +194,7 @@ if(ban==1){
 boton4.getAccion(ban);//I/O
 if(ban==1){
  Print("SE ACCIONO EL BOTON I/O");
-  grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg1,operaciones);
+  grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg,operaciones);
   //grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
   time=TimeCurrent();
   numeroLienas++;
@@ -209,22 +210,22 @@ for(int i=0;i<contadorGrilla;i++){// scan de todas las grillas !!!
 if(vector[i].getEstadoGrilla()){ //entro si la grilla existe
       ObjLinea.HLineMove(linea1,vector[i].getTechoCanal());
       ObjLinea.HLineMove(linea2,vector[i].getPisoCanal());
-      //Print(i," posicion del vector contadorGrilla ",contadorGrilla," vector[contadorGrilla].setIdGrilla ",vector[i].getIdGrilla());
-       // Monitoreo del piso y techo del canal. (depues seran adaptativos)
-        controles.canalesPisoTecho(vector[i]);
-      // Adapta la grilla
-        controles.adaptarGrilla(orden,vector[i],mg1);
-      // Limites alcanzados
-        controles.limitesAlcanzados(operaciones,vector[i],mg1,vector,vectorOrden,contadorGrilla);      
-      // itera Geometria        
-        controles.iteraGeometria(operaciones,vector[i],vectorOrden,mg1,banderaEliminaObjetoVector);
+       //Print(i," idGrilla ",vector[i].getIdGrilla()," mg id grilla ",mg[i].getIdGrilla()," mg arr_impar ",mg[i].getNivelS0()," m getNivelS1 ",mg[i].getNivelS1()," m arr_par ",mg[i].getArr_par(0));
+       // Adapta la grilla
+       controles.adaptarGrilla(orden,vector[i],mg[i]);
+       // Monitoreo del piso y techo del canal. (depues seran adaptativos)        
+       controles.canalesPisoTecho(vector[i]);
+       // Limites alcanzados
+       controles.limitesAlcanzados(operaciones,vector[i],mg[i],vector,vectorOrden,contadorGrilla);      
+       // itera Geometria        
+       controles.iteraGeometria(operaciones,vector[i],vectorOrden,mg[i],banderaEliminaObjetoVector);
          
                
       // ***************************************************************************
       //    INICIA GRILLA AUTOMAICAMENTE
       // ===========================================================================  
       if(!vector[i].getEstadoGrilla())
-         grilla.lanzaGrillaAutomatica(vector,vectorOrden,contadorGrilla,banderaAgregaGrilla,mg1,operaciones,banderaIniciaBoton,automatico,boton1,linea0);
+         grilla.lanzaGrillaAutomatica(vector,vectorOrden,contadorGrilla,banderaAgregaGrilla,mg,operaciones,banderaIniciaBoton,automatico,boton1,linea0);
   }//fin de primer if
 }
 
@@ -270,9 +271,12 @@ if(vector[i].getEstadoGrilla()){ //entro si la grilla existe
 if( (iBars(NULL,PERIOD_M1)>2) && (barras_m1!=iBars(NULL,PERIOD_M1))   ){       // Velas de 1 minutito !!!
 barras_m1 = iBars(NULL,PERIOD_M1);
 //Print("M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1M1");
-
- //controles.resumenOrdenes(balance,vector[0].getMagicoActual());
-
+//for(int i=0;i<contadorGrilla;i++){// scan de todas las grillas !!!
+//---------------------Mueve lineas-------------------------------------------
+      //if(vector[i].getEstadoGrilla()){ 
+            //controles.resumenOrdenes(balance,vector[0].getMagicoActual());
+         //}
+   //}
 }
 
 
