@@ -384,7 +384,7 @@ void Grilla::ArmarGrillaInicial(Mg &mg,Operaciones &ope,Orden* &vectorOrden[]) /
    mg.setNivelI3(sellTP);  
    
    Diametro = TechoCanalp + pisoCanalp;
-  
+  setDiametro(Diametro);
   setMagicoInicial(magico1);
   magicoactual=getMagicoInicial();
   setIdGrilla(magico1);

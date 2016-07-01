@@ -213,8 +213,7 @@ double NuevoPiso, NuevoTecho;
                    }
                      else Print("error de OrderDelete458");
             }
-         
-         
+          
          //NSellLimit = NSellLimit - 1;
          
          }
@@ -272,7 +271,7 @@ bool Controles::limitesAlcanzados(Operaciones &o,Grilla &_grilla,Mg &mg,Grilla* 
      _grilla.setMagicoActual(magicoactual);
      
          //Sleep(10000);
-      //grilla.lanzaGrilla(vector,vectorOrden,contador,_mg,o);//lanza grilla
+      //grilla.lanzaGrilla(vector,vectorOrden,contador,mg,o);//lanza grilla
       
    }
  return true;     
@@ -606,7 +605,7 @@ double   diametrop = diametro/(10*grilla.getPoint()) ;  // diametro en pip ?????
    // Actualizamos valor global del diametro. El techo no se altera.
    //Diametro = (int) diametrop ;
 int dist_tp_sl_pip = (int) grilla.getDiametro()/4;
-  
+  Print("RecalculoReposicionamientoPiso Diametrooooooooooooooooooooooooooooooooooooooooooo  grilla.getDiametro() ",grilla.getDiametro());
 Print("********* RecalculoReposicionamiento PISO ************ ",nuevopiso);
 Print("********* RecalculoReposicionamiento diametro  ************ ",diametrop);
 Print("********* RecalculoReposicionamiento dist_tp_sl_pip  ************ ",dist_tp_sl_pip);
@@ -669,10 +668,11 @@ double   diametrop = diametro/(10*grilla.getPoint()) ;
 
    // Actualizamos valor global del diametro. El techo no se altera.
    //Diametro = (int) diametrop ;
-      grilla.setDiametro((int) diametrop);
+    //  grilla.setDiametro((int) diametrop);
 int dist_tp_sl_pip = (int) grilla.getDiametro()/4;
 
 
+ Print("RecalculoReposicionamientoTecho Diametrooooooooooooooooooooooooooooooooooooooooooo  grilla.getDiametro() ",grilla.getDiametro());
    
 
 Print("********* RecalculoReposicionamiento GRILLA ************ ",grilla.getIdGrilla());   

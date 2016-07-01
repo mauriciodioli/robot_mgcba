@@ -76,7 +76,7 @@ int numeroLienas=2;
 double equity,balance;
 uint  barras_m1,barras_m5,barras_m15,barras_m30,barras_h1;
 static long opens;
-bool banderaIniciaBoton=true,automatico=false,banderaEliminaObjetoVector=false,banderaAgregaGrilla=false;
+bool banderaIniciaBoton=true,automatico=true,banderaEliminaObjetoVector=false,banderaAgregaGrilla=false;
 int CanalActivoflag[10],contadorGrilla=0;   // 10 flags de si un canal esta activo
 string come;
 string email="madioli26@hotmail.com";
@@ -99,7 +99,6 @@ int OnInit()
    ArrayResize(mg,10000);
    ArrayResize(vectorOrden,100000); 
    for(int t=0;t<1;t++){   
-   //grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
     grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg,operaciones);
     Print("inicia grilla N°",vector[t].getIdGrilla());
     }
@@ -153,6 +152,7 @@ if (ban==1){
     boton1.setColor(Boton1,colorBoton1);
     boton1.setDescripcion(Boton1,":)");
     sonido.setSonido(sonidoIinicio);
+    for(int t=0;t<1;t++)
     grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg,operaciones);
     time=TimeCurrent();
     numeroLienas++;
@@ -195,7 +195,6 @@ boton4.getAccion(ban);//I/O
 if(ban==1){
  Print("SE ACCIONO EL BOTON I/O");
   grilla.lanzaGrilla(vector,vectorOrden,contadorGrilla,mg,operaciones);
-  //grilla.lanzaGrilla(vector,contadorGrilla,mg1,operaciones);
   time=TimeCurrent();
   numeroLienas++;
   string nom="linea"+IntegerToString(numeroLienas);
